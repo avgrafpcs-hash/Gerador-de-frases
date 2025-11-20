@@ -127,7 +127,7 @@ const App: React.FC = () => {
               onClick={handlePrintAll}
               className="w-full py-3 bg-white hover:bg-gray-100 text-black rounded-lg font-bold text-sm uppercase tracking-wide shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
             >
-              🖨️ Imprimir Tudo ({items.length})
+              🖨️ Imprimir Tudo (Separação Automática)
             </button>
           )}
         </div>
@@ -163,7 +163,7 @@ const App: React.FC = () => {
           <div className="print-area w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 w-full max-w-[1600px] mx-auto items-start">
               {items.map((item) => (
-                <div key={item.id} className="flex justify-center">
+                <div key={item.id} className="flex justify-center w-full">
                   <ReceiptItem 
                     data={item} 
                     includeImage={config.includeImage}

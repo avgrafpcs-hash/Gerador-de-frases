@@ -38,7 +38,7 @@
         }
 
         /* DESTROY GRID LAYOUT FOR PRINTING */
-        /* This ensures items stack vertically on the paper roll instead of trying to be side-by-side */
+        /* This ensures items stack vertically on the paper roll so printer sees them as a sequence */
         .grid {
           display: block !important;
         }
@@ -46,32 +46,48 @@
           display: block !important;
         }
         
-        /* Receipt Container Logic */
-        .receipt-container {
-          width: 72mm !important; /* 72mm is safe zone for 80mm paper (4mm margin each side) */
-          margin-left: 2mm !important; /* Small left margin for alignment */
-          margin-right: auto !important;
+        /* Receipt Logic */
+        .receipt-wrapper {
+          display: block !important;
           margin-bottom: 0 !important;
+          padding-bottom: 0 !important;
+        }
+
+        .receipt-container {
+          width: 72mm !important; /* Safe zone for 80mm paper */
+          margin-left: auto !important; 
+          margin-right: auto !important;
+          margin-bottom: 5mm !important; /* Spacing before cut */
           padding: 0 !important;
           
           /* Remove web styling */
           box-shadow: none !important;
           border: none !important;
           
-          /* Printing Behavior */
-          page-break-after: always; /* Cut after each item */
-          break-inside: avoid;
+          /* CRITICAL: CUT PAPER AFTER EACH ITEM */
+          page-break-after: always !important;
+          break-inside: avoid !important;
+        }
+        
+        /* Prevent extra blank page at very end if possible */
+        .print-area > div:last-child .receipt-container {
+            page-break-after: auto !important;
         }
 
-        /* Single Print Logic */
-        body.printing-single .receipt-container {
+        /* Single Print Logic - Hides everything else */
+        body.printing-single .receipt-wrapper {
           display: none !important; 
         }
-        body.printing-single .print-this-only {
+        body.printing-single .print-this-only-wrapper {
           display: block !important;
           position: absolute;
           top: 0;
           left: 0;
+          width: 100% !important;
+        }
+        /* When printing single, we don't strictly need a page break after, but it helps eject the paper */
+        body.printing-single .print-this-only-wrapper .receipt-container {
+            page-break-after: auto !important;
         }
       }
     </style>

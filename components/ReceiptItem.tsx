@@ -11,32 +11,23 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage }) => {
   const imageUrl = `https://picsum.photos/seed/${data.imageSeed}/380/250?grayscale`;
 
   const handlePrintIndividual = () => {
-    // This sets a temporary class on the body to hide other items via CSS
+    // Sets classes to hide other elements during print
     document.body.classList.add('printing-single');
-    const element = document.getElementById(`receipt-${data.id}`);
-    if (element) element.classList.add('print-this-only');
+    const wrapper = document.getElementById(`wrapper-${data.id}`);
+    if (wrapper) wrapper.classList.add('print-this-only-wrapper');
     
     window.print();
     
-    // Cleanup after print dialog closes
+    // Cleanup
     document.body.classList.remove('printing-single');
-    if (element) element.classList.remove('print-this-only');
+    if (wrapper) wrapper.classList.remove('print-this-only-wrapper');
   };
 
   return (
-    <div className="relative group">
-      {/* Overlay Button for Individual Print */}
-      <button 
-        onClick={handlePrintIndividual}
-        className="absolute -top-3 -right-3 bg-blue-600 text-white p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50 print:hidden"
-        title="Imprimir apenas este"
-      >
-        🖨️
-      </button>
-
+    <div id={`wrapper-${data.id}`} className="receipt-wrapper flex flex-col items-center pb-12">
+      
       {/* Receipt Container - Strict 80mm Width Simulation */}
       <div 
-        id={`receipt-${data.id}`}
         className="bg-white text-black font-mono p-1 mx-auto shadow-sm border border-gray-200 relative receipt-container"
         style={{ width: '76mm', maxWidth: '100%' }} 
       >
@@ -97,9 +88,19 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage }) => {
           <p>www.suaempresa.com.br</p>
         </div>
 
-        {/* Cut Line (Visual only) */}
+        {/* Cut Line (Visual only for web) */}
         <div className="mt-4 border-b-2 border-dashed border-gray-400 w-full h-1 print:hidden"></div>
       </div>
+
+      {/* Button for Individual Print (Below the receipt) */}
+      <button 
+        onClick={handlePrintIndividual}
+        className="mt-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-2 px-6 rounded-full shadow-md transition-all flex items-center gap-2 print:hidden"
+        title="Imprimir apenas este recibo"
+      >
+        <span>🖨️ Imprimir Este</span>
+      </button>
+
     </div>
   );
 };
