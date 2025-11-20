@@ -1,5 +1,5 @@
 import React from 'react';
-import { COMPANY_LOGO_BASE64 } from '../constants';
+import { COMPANY_LOGO_BASE64 } from '../logo';
 
 const Logo: React.FC = () => {
   return (

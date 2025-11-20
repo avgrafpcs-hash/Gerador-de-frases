@@ -1,6 +1,4 @@
-// Placeholder Logo (A simple "AI PRINT" text graphic in base64)
-// Users can replace this string with their own Base64 image.
-export const COMPANY_LOGO_BASE64 = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAYAAADDhn8LAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAHaSURBVHgB7dTBjalAGEZhRtO4tM5oHI1j6IxW4D2wQ/B+Z/4H7uAg5yZ5B2KMvT3L8/f39/fT+Xw+h7+/v4sx9vV6HWKMu93uEGPc7/eHGOPhcDg8//P5fI4xxv1+f4gxdh6PxyHG2DkcU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4yd4zHF2DkeU4y9PcvzB5E1k050g5TMAAAAAElFTkSuQmCC`;
 
+// Constants global file
 export const PAPER_WIDTH_CLASS = 'w-[80mm]'; // Approx 300px
 export const PRINT_WIDTH_STYLE = { width: '80mm' };

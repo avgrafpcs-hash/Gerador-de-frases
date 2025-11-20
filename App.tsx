@@ -35,7 +35,7 @@ const App: React.FC = () => {
         <div className="p-4 border-b border-slate-800 flex items-center gap-3 bg-slate-900">
           <div className="bg-emerald-500/10 p-2 rounded-lg text-2xl">🖨️</div>
           <div>
-            <h1 className="font-bold text-lg leading-none text-white">Gerador Térmico</h1>
+            <h1 className="font-bold text-lg leading-none text-white">Gerador de Frases</h1>
             <p className="text-xs text-slate-500 mt-0.5">Impressão 80mm</p>
           </div>
         </div>

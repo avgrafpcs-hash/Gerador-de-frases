@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gerador Térmico AI</title>
+    <title>Gerador de Frases</title>
     <script>
       window.process = window.process || { env: { NODE_ENV: 'production' } };
     </script>
@@ -16,48 +16,59 @@
 
       /* PRINT STYLES */
       @media print {
+        /* Setup Page */
         @page {
           margin: 0;
-          size: 80mm auto; /* Force 80mm paper width */
+          size: 80mm auto; /* Force 80mm width paper */
         }
         
-        body {
-          margin: 0;
-          padding: 0;
+        /* Reset Body and Root */
+        body, #root {
           background: white;
-          width: 80mm;
+          width: 80mm !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: visible !important;
+          height: auto !important;
         }
 
-        /* Hide all non-print elements */
-        .no-print, button, .group-hover\:opacity-100 {
+        /* Hide UI Elements */
+        .no-print, button, ::-webkit-scrollbar, header, nav {
           display: none !important;
         }
 
-        /* Reset Container for Print */
-        #root, .print-area {
-          width: 100%;
-          margin: 0;
-          padding: 0;
-          display: block;
+        /* DESTROY GRID LAYOUT FOR PRINTING */
+        /* This ensures items stack vertically on the paper roll instead of trying to be side-by-side */
+        .grid {
+          display: block !important;
         }
-
-        /* The Receipt Card itself */
+        .print-area > div {
+          display: block !important;
+        }
+        
+        /* Receipt Container Logic */
         .receipt-container {
-          width: 72mm !important; /* Safe area (80mm - 4mm margins) */
-          margin: 0 auto !important; 
+          width: 72mm !important; /* 72mm is safe zone for 80mm paper (4mm margin each side) */
+          margin-left: 2mm !important; /* Small left margin for alignment */
+          margin-right: auto !important;
+          margin-bottom: 0 !important;
           padding: 0 !important;
+          
+          /* Remove web styling */
           box-shadow: none !important;
           border: none !important;
-          page-break-inside: avoid;
-          page-break-after: always; /* Force cut between items */
+          
+          /* Printing Behavior */
+          page-break-after: always; /* Cut after each item */
+          break-inside: avoid;
         }
 
-        /* Logic for "Print Individual" */
+        /* Single Print Logic */
         body.printing-single .receipt-container {
-          display: none !important; /* Hide all receipts by default */
+          display: none !important; 
         }
         body.printing-single .print-this-only {
-          display: block !important; /* Show only the selected one */
+          display: block !important;
           position: absolute;
           top: 0;
           left: 0;
