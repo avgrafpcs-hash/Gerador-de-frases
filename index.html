@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador Térmico AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @media print {
+        @page {
+          margin: 0;
+          size: 80mm auto; /* Forces browser to respect thermal width */
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          background: white !important;
+          -webkit-print-color-adjust: exact;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .print-area {
+          display: block !important;
+          width: 100% !important;
+          max-width: 80mm !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          box-shadow: none !important;
+        }
+        /* Hide scrollbars/backgrounds on container */
+        #root {
+          background: white !important;
+          min-height: auto !important;
+        }
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['Courier New', 'Courier', 'monospace'],
+              sans: ['Helvetica', 'Arial', 'sans-serif'],
+              serif: ['Georgia', 'serif'],
+            },
+            screens: {
+              'print': {'raw': 'print'},
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-out',
+              'slide-up': 'slideUp 0.5s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react-to-print": "https://aistudiocdn.com/react-to-print@^3.2.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased">
+    <div id="root"></div>
+  </body>
+</html>
