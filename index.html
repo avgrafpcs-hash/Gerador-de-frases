@@ -50,6 +50,7 @@
             animation: {
               'fade-in': 'fadeIn 0.5s ease-out',
               'slide-up': 'slideUp 0.5s ease-out',
+              'fade-in-up': 'fadeInUp 0.5s ease-out',
             },
             keyframes: {
               fadeIn: {
@@ -59,6 +60,10 @@
               slideUp: {
                 '0%': { transform: 'translateY(20px)', opacity: '0' },
                 '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
               }
             }
           }
@@ -79,5 +84,21 @@
 </head>
   <body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased">
     <div id="root"></div>
+    <!-- Fallback error handler for White Screen of Death -->
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        console.error("Global Error:", message, error);
+        // If root is empty, we might be in a crash state
+        const root = document.getElementById('root');
+        if (root && root.innerHTML.trim() === '') {
+          const errorDiv = document.createElement('div');
+          errorDiv.style.padding = '20px';
+          errorDiv.style.fontFamily = 'sans-serif';
+          errorDiv.style.color = 'red';
+          errorDiv.innerHTML = '<h3>Erro ao carregar aplicação</h3><p>Verifique o console do navegador para detalhes.</p><pre>' + message + '</pre>';
+          document.body.appendChild(errorDiv);
+        }
+      };
+    </script>
   </body>
 </html>

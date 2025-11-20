@@ -1,18 +1,25 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Category, GeneratedContent } from "../types";
 
-// Ensure API key is available
-const apiKey = process.env.API_KEY || '';
-
 export const generateContent = async (
   category: Category,
   count: number
 ): Promise<GeneratedContent[]> => {
+  
+  let apiKey = '';
+  try {
+    // Safely access process.env to prevent "process is not defined" crashes in browser environments
+    // This is the most common cause of "White Screen" on Vercel/Vite deployments if not polyfilled
+    apiKey = process.env.API_KEY || '';
+  } catch (error) {
+    console.warn("Environment variable access issue:", error);
+  }
+
   if (!apiKey) {
     console.error("API Key is missing");
     return Array.from({ length: count }).map((_, i) => ({
       id: `mock-${i}`,
-      text: "Erro: Configure a API Key no painel da Vercel (Environment Variables) para ativar a IA.",
+      text: "Erro: Configure a API Key no painel da Vercel (Settings > Environment Variables) com o nome API_KEY e faça o Redeploy.",
       authorOrSource: "Sistema",
       imageSeed: "error"
     }));
@@ -60,7 +67,7 @@ export const generateContent = async (
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
-        temperature: 1.1, // High temperature for more randomness and "unlimited" variety
+        temperature: 1.1, // High temperature for more randomness
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,

@@ -42,10 +42,11 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, showCutLi
 
         {/* Content */}
         <div className="text-center mb-8">
-          <p className="text-3xl font-black uppercase leading-8 tracking-tight mb-5 text-black">
+          {/* text-2xl is better for 80mm width than 3xl to prevent bad wrapping, while still being large */}
+          <p className="text-2xl font-black uppercase leading-tight tracking-tight mb-5 text-black break-words">
             "{data.text}"
           </p>
-          <div className="inline-block border-t border-black pt-1 px-4">
+          <div className="inline-block border-t border-black pt-2 px-4">
              <p className="text-lg font-medium italic font-serif text-gray-800">
               {data.authorOrSource}
             </p>
