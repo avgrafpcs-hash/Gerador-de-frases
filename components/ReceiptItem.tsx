@@ -43,7 +43,7 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryI
         </div>
         
         {/* Date */}
-        <div className="text-center text-[10px] print:text-xs mb-3 font-bold tracking-tighter text-gray-600">
+        <div className="text-center text-xs mb-3 font-bold tracking-tighter text-gray-600">
           <span>{new Date().toLocaleDateString()} • {new Date().toLocaleTimeString().slice(0,5)}</span>
         </div>
 
@@ -87,7 +87,7 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryI
         </div>
 
         {/* Footer: Contacts */}
-        <div className="text-center text-[10px] print:text-xs font-bold border-t-2 border-black pt-2 mt-2 pb-2 space-y-0.5">
+        <div className="text-center text-xs font-bold border-t-2 border-black pt-2 mt-2 pb-2 space-y-0.5">
           <p>Whatsapp: 82 99607.7308</p>
           <p>E-mail: avgraf@outlook.com</p>
         </div>
