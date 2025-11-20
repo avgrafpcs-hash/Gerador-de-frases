@@ -9,29 +9,22 @@
       @media print {
         @page {
           margin: 0;
-          size: 80mm auto; /* Forces browser to respect thermal width */
+          size: 80mm auto; /* Attempt to set paper size */
         }
         body {
           margin: 0;
           padding: 0;
-          background: white !important;
-          -webkit-print-color-adjust: exact;
+          background: white;
         }
         .no-print {
           display: none !important;
         }
         .print-area {
           display: block !important;
-          width: 100% !important;
-          max-width: 80mm !important;
-          margin: 0 !important;
-          padding: 0 !important;
-          box-shadow: none !important;
-        }
-        /* Hide scrollbars/backgrounds on container */
-        #root {
-          background: white !important;
-          min-height: auto !important;
+          width: 80mm !important;
+          margin: 0;
+          padding: 0;
+          color: black;
         }
       }
     </style>
@@ -42,29 +35,9 @@
             fontFamily: {
               mono: ['Courier New', 'Courier', 'monospace'],
               sans: ['Helvetica', 'Arial', 'sans-serif'],
-              serif: ['Georgia', 'serif'],
             },
             screens: {
               'print': {'raw': 'print'},
-            },
-            animation: {
-              'fade-in': 'fadeIn 0.5s ease-out',
-              'slide-up': 'slideUp 0.5s ease-out',
-              'fade-in-up': 'fadeInUp 0.5s ease-out',
-            },
-            keyframes: {
-              fadeIn: {
-                '0%': { opacity: '0' },
-                '100%': { opacity: '1' },
-              },
-              slideUp: {
-                '0%': { transform: 'translateY(20px)', opacity: '0' },
-                '100%': { transform: 'translateY(0)', opacity: '1' },
-              },
-              fadeInUp: {
-                '0%': { opacity: '0', transform: 'translateY(10px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              }
             }
           }
         }
@@ -82,23 +55,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased">
+  <body class="bg-slate-100 text-slate-900 min-h-screen font-sans">
     <div id="root"></div>
-    <!-- Fallback error handler for White Screen of Death -->
-    <script>
-      window.onerror = function(message, source, lineno, colno, error) {
-        console.error("Global Error:", message, error);
-        // If root is empty, we might be in a crash state
-        const root = document.getElementById('root');
-        if (root && root.innerHTML.trim() === '') {
-          const errorDiv = document.createElement('div');
-          errorDiv.style.padding = '20px';
-          errorDiv.style.fontFamily = 'sans-serif';
-          errorDiv.style.color = 'red';
-          errorDiv.innerHTML = '<h3>Erro ao carregar aplicação</h3><p>Verifique o console do navegador para detalhes.</p><pre>' + message + '</pre>';
-          document.body.appendChild(errorDiv);
-        }
-      };
-    </script>
   </body>
 </html>

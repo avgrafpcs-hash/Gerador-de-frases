@@ -12,60 +12,53 @@ interface ReceiptItemProps {
 
 const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, showCutLine, className = '' }) => {
   // Using picsum with seed for consistent images, grayscale for thermal simulation
-  // Adding random param to ensure browser doesn't cache heavily if seeds repeat
-  const imageUrl = `https://picsum.photos/seed/${data.imageSeed}/400/300?grayscale`;
+  const imageUrl = `https://picsum.photos/seed/${data.imageSeed}/380/250?grayscale`;
 
   return (
-    <div className={`bg-white text-black font-sans p-2 mx-auto ${PAPER_WIDTH_CLASS} ${className}`}>
+    <div className={`bg-white text-black font-mono p-4 mx-auto shadow-sm border-b border-gray-100 ${PAPER_WIDTH_CLASS} ${className}`}>
       
-      <div className="px-2 pb-4">
-        {/* Branding Header */}
-        <Logo />
-        
-        {/* Date/Time - Typical Receipt Header */}
-        <div className="text-center font-mono text-[12px] mb-6 border-b-2 border-black pb-2">
-          <p className="font-bold">{new Date().toLocaleDateString()} • {new Date().toLocaleTimeString().slice(0, 5)}</p>
-          <p className="uppercase tracking-widest mt-1">Sua Dose de Inspiração</p>
-        </div>
+      {/* Branding Header */}
+      <Logo />
+      
+      {/* Date/Time - Typical Receipt Header */}
+      <div className="text-center text-[10px] mb-4 border-b border-black pb-2">
+        <p>{new Date().toLocaleDateString()} - {new Date().toLocaleTimeString()}</p>
+        <p>*** MENSAGEM DO DIA ***</p>
+      </div>
 
-        {/* Optional Image */}
-        {includeImage && (
-          <div className="mb-6 overflow-hidden border-2 border-black rounded-sm">
-            <img 
-              src={imageUrl} 
-              alt="Generated Illustration" 
-              className="w-full h-auto block filter contrast-125 brightness-110"
-              crossOrigin="anonymous"
-            />
-          </div>
-        )}
-
-        {/* Content */}
-        <div className="text-center mb-8">
-          {/* text-2xl is better for 80mm width than 3xl to prevent bad wrapping, while still being large */}
-          <p className="text-2xl font-black uppercase leading-tight tracking-tight mb-5 text-black break-words">
-            "{data.text}"
-          </p>
-          <div className="inline-block border-t border-black pt-2 px-4">
-             <p className="text-lg font-medium italic font-serif text-gray-800">
-              {data.authorOrSource}
-            </p>
-          </div>
+      {/* Optional Image */}
+      {includeImage && (
+        <div className="mb-4 overflow-hidden rounded-sm border border-black">
+          <img 
+            src={imageUrl} 
+            alt="Generated Illustration" 
+            className="w-full h-auto block filter contrast-125 brightness-90"
+            crossOrigin="anonymous"
+          />
         </div>
+      )}
 
-        {/* Footer */}
-        <div className="text-center font-mono text-[11px] border-t-2 border-black border-dashed pt-3">
-          <p className="font-bold uppercase mb-1">Volte Sempre!</p>
-          <p>www.suaempresa.com.br</p>
-          <p>@suaempresa</p>
-        </div>
+      {/* Content */}
+      <div className="text-center mb-6">
+        <p className="text-xl font-bold uppercase leading-tight mb-4">
+          "{data.text}"
+        </p>
+        <p className="text-sm italic">
+          — {data.authorOrSource}
+        </p>
+      </div>
+
+      {/* Footer */}
+      <div className="text-center text-[10px] border-t border-black pt-2">
+        <p>Obrigado pela preferência!</p>
+        <p>www.suaempresa.com.br</p>
       </div>
 
       {/* Cut Line Visual (only for screen or separate prints) */}
       {showCutLine && (
-        <div className="mt-10 border-b-2 border-dashed border-gray-800 w-full relative h-4">
-          <span className="absolute top-[-12px] right-0 bg-white pl-2 text-lg text-black no-print">
-            ✂️
+        <div className="mt-8 border-b-2 border-dashed border-gray-400 w-full relative h-4">
+          <span className="absolute top-[-10px] left-1/2 transform -translate-x-1/2 bg-white px-2 text-xs text-gray-500 no-print">
+            ✂️ Corte aqui
           </span>
         </div>
       )}
