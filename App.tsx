@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { useReactToPrint } from 'react-to-print';
 import { Category, CATEGORIES, AppConfig, GeneratedContent } from './types';
 import { generateContent } from './services/geminiService';
 import ReceiptItem from './components/ReceiptItem';
@@ -39,11 +38,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
+    <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-slate-900">
       
       {/* --- LEFT PANEL: Controls (Hidden on print) --- */}
-      <div className="w-full md:w-1/2 lg:w-5/12 p-6 bg-slate-900 text-white overflow-y-auto no-print">
-        <div className="max-w-xl mx-auto">
+      <div className="w-full md:w-1/2 lg:w-5/12 p-6 bg-slate-900 text-white h-full overflow-y-auto no-print border-r border-slate-800">
+        <div className="max-w-xl mx-auto pb-20">
           <div className="flex items-center gap-3 mb-8">
             <div className="bg-white p-1 rounded">
              {/* Small preview of logo in header */}
@@ -177,7 +176,7 @@ const App: React.FC = () => {
       </div>
 
       {/* --- RIGHT PANEL: Preview (Visible on screen, reformatted on print) --- */}
-      <div className="w-full md:w-1/2 lg:w-7/12 bg-gray-200 flex justify-center p-8 md:p-12 overflow-y-auto relative">
+      <div className="w-full md:w-1/2 lg:w-7/12 bg-gray-200 flex justify-center p-8 md:p-12 h-full overflow-y-auto relative">
         
         {/* Visual Hint Background */}
         {items.length === 0 && !loading && (
@@ -190,7 +189,7 @@ const App: React.FC = () => {
 
         {/* Actual Print Content Area */}
         {(items.length > 0 || loading) && (
-          <div id="print-container" className="relative print-area">
+          <div id="print-container" className="relative print-area pb-20">
             {loading && (
                <div className="w-[80mm] h-[400px] bg-white animate-pulse flex flex-col items-center justify-center gap-4 shadow-2xl">
                   <div className="w-16 h-16 bg-gray-200 rounded-full"></div>

@@ -4,12 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gerador Térmico AI</title>
+    <script>
+      // Polyfill for process.env to prevent crashes in browser environments
+      window.process = window.process || { env: { NODE_ENV: 'production' } };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @media print {
         @page {
           margin: 0;
-          size: 80mm auto; /* Attempt to set paper size */
+          size: 80mm auto;
         }
         body {
           margin: 0;
@@ -22,10 +26,32 @@
         .print-area {
           display: block !important;
           width: 80mm !important;
-          margin: 0;
+          margin: 0 auto;
           padding: 0;
           color: black;
+          position: absolute;
+          top: 0;
+          left: 0;
         }
+        /* Hide scrollbars in print */
+        ::-webkit-scrollbar {
+          display: none;
+        }
+      }
+      /* Custom scrollbar for web UI */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e293b;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
       }
     </style>
     <script>
@@ -38,24 +64,46 @@
             },
             screens: {
               'print': {'raw': 'print'},
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-out',
+              'slide-up': 'slideUp 0.5s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              }
             }
           }
         }
       }
     </script>
-  <script type="importmap">
+<script type="importmap">
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "react-to-print": "https://aistudiocdn.com/react-to-print@^3.2.0"
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
   }
 }
 </script>
 </head>
-  <body class="bg-slate-100 text-slate-900 min-h-screen font-sans">
-    <div id="root"></div>
+  <body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-white">
+    <div id="root">
+        <!-- Loading Fallback -->
+        <div class="h-screen w-full flex items-center justify-center">
+            <div class="text-center p-10 animate-pulse">
+                <div class="text-4xl mb-4">🖨️</div>
+                <h2 class="text-xl font-bold text-slate-400">Carregando App...</h2>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

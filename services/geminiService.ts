@@ -1,19 +1,29 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Category, GeneratedContent } from "../types";
 
-// Ensure API key is available
-const apiKey = process.env.API_KEY || '';
-
 export const generateContent = async (
   category: Category,
   count: number
 ): Promise<GeneratedContent[]> => {
+  
+  // Robust API Key retrieval to prevent crashes
+  const getApiKey = () => {
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) return process.env.API_KEY;
+    // Check standard Vite/framework env vars if process.env is missing/empty
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) return import.meta.env.VITE_API_KEY;
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.REACT_APP_API_KEY) return import.meta.env.REACT_APP_API_KEY;
+    return '';
+  };
+
+  const apiKey = getApiKey();
+
   if (!apiKey) {
-    console.error("API Key is missing");
-    // Return mock data if no API key to prevent crash during dev without env
+    console.error("API Key not found. Configure API_KEY in Vercel environment variables.");
     return Array.from({ length: count }).map((_, i) => ({
       id: `mock-${i}`,
-      text: "Erro: Configure a API Key no arquivo .env para gerar conteúdo real.",
+      text: "ERRO: Chave API não configurada. Adicione API_KEY nas variáveis de ambiente do Vercel.",
       authorOrSource: "Sistema",
       imageSeed: "error"
     }));
@@ -24,29 +34,38 @@ export const generateContent = async (
   let promptContext = "";
   switch (category) {
     case 'religiosa':
-      promptContext = "mensagens curtas religiosas ou versículos bíblicos inspiradores";
+      promptContext = "mensagens bíblicas de esperança, fé e gratidão, ou versículos curtos e poderosos";
       break;
     case 'pensadores':
-      promptContext = "frases curtas e impactantes de grandes pensadores mundiais";
+      promptContext = "frases de impacto sobre sucesso, liderança e vida de grandes pensadores mundiais";
       break;
     case 'filosofos':
-      promptContext = "citações profundas de filósofos famosos (ex: Sócrates, Platão, Nietzsche)";
+      promptContext = "citações profundas e reflexivas de filósofos históricos (ex: Estoicismo, Gregos, Modernos)";
       break;
     case 'frames':
-      promptContext = "frases icônicas de filmes ou cultura pop";
+      promptContext = "frases icônicas e inesquecíveis do cinema e da cultura pop";
       break;
     case 'versos':
-      promptContext = "pequenos poemas ou versos românticos/inspiradores";
+      promptContext = "poemas curtos, haicais ou versos românticos e inspiradores";
       break;
     case 'musicas':
-      promptContext = "trechos marcantes de letras de músicas populares brasileiras (MPB, Rock, Samba)";
+      promptContext = "trechos emocionantes de músicas brasileiras famosas (MPB, Rock Nacional, Samba)";
       break;
   }
 
+  // Add randomness to the prompt to ensure "unlimited" feeling
+  const randomizers = ["raras", "pouco conhecidas", "clássicas", "motivacionais", "reflexivas", "filosóficas"];
+  const randomStyle = randomizers[Math.floor(Math.random() * randomizers.length)];
+
   const prompt = `
-    Gere ${count} ${promptContext}.
+    Você é um gerador de conteúdo criativo. Gere ${count} ${promptContext}.
+    Estilo desejado: ${randomStyle}.
+    IMPORTANTE: Evite frases clichês ou muito repetitivas. Busque variedade.
     O texto deve ser em Português do Brasil.
-    Para cada item, forneça o texto principal, o autor/fonte, e uma palavra-chave (seed) em inglês para buscar uma imagem abstrata relacionada.
+    Para cada item, forneça:
+    1. O texto principal (máximo 200 caracteres para caber no papel).
+    2. O autor ou fonte.
+    3. Uma palavra-chave EM INGLÊS (imageSeed) que represente a emoção ou tema da frase para gerar uma imagem abstrata.
   `;
 
   try {
@@ -54,6 +73,7 @@ export const generateContent = async (
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
+        temperature: 1.2, // High temperature for maximum variety and creativity
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -62,7 +82,7 @@ export const generateContent = async (
             properties: {
               text: { type: Type.STRING },
               authorOrSource: { type: Type.STRING },
-              imageSeed: { type: Type.STRING, description: "A single english keyword for image generation (e.g. 'peace', 'sun', 'thought')" }
+              imageSeed: { type: Type.STRING }
             },
             required: ["text", "authorOrSource", "imageSeed"]
           }
@@ -86,8 +106,8 @@ export const generateContent = async (
     console.error("Gemini API Error:", error);
     return Array.from({ length: count }).map((_, i) => ({
       id: `err-${i}`,
-      text: "Ocorreu um erro ao conectar com a IA. Tente novamente.",
-      authorOrSource: "Sistema",
+      text: "Ocorreu um erro momentâneo na IA. Por favor, tente novamente em alguns segundos.",
+      authorOrSource: "Erro de Conexão",
       imageSeed: "error"
     }));
   }
