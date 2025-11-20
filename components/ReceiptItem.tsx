@@ -5,11 +5,11 @@ import Logo from './Logo';
 interface ReceiptItemProps {
   data: GeneratedContent;
   includeImage: boolean;
+  categoryIcon: string;
 }
 
-const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage }) => {
-  const imageUrl = `https://picsum.photos/seed/${data.imageSeed}/380/250?grayscale`;
-
+const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryIcon }) => {
+  
   const handlePrintIndividual = () => {
     // Sets classes to hide other elements during print
     document.body.classList.add('printing-single');
@@ -24,78 +24,82 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage }) => {
   };
 
   return (
-    <div id={`wrapper-${data.id}`} className="receipt-wrapper flex flex-col items-center pb-12">
+    <div id={`wrapper-${data.id}`} className="receipt-wrapper flex flex-col items-center w-full">
       
       {/* Receipt Container - Strict 80mm Width Simulation */}
       <div 
-        className="bg-white text-black font-mono p-1 mx-auto shadow-sm border border-gray-200 relative receipt-container"
+        className="bg-white text-black font-mono p-1 mx-auto shadow-lg border border-gray-200 relative receipt-container hover:shadow-xl transition-shadow duration-300"
         style={{ width: '76mm', maxWidth: '100%' }} 
       >
         
-        {/* Header */}
-        <div className="transform scale-75 origin-top -mb-2 opacity-90">
-          <Logo />
+        {/* Header: Logo & Frase do Dia */}
+        <div className="flex flex-col items-center mb-2 pt-2">
+          <div className="transform scale-90 origin-top">
+            <Logo />
+          </div>
+          <h2 className="text-sm font-black uppercase tracking-widest border-b-2 border-black pb-0.5 mt-1">
+            Frase do Dia
+          </h2>
         </div>
         
         {/* Date */}
-        <div className="text-center text-[9px] mb-2 border-b border-black pb-1 font-bold tracking-tighter">
+        <div className="text-center text-[9px] mb-3 font-bold tracking-tighter text-gray-600">
           <span>{new Date().toLocaleDateString()} • {new Date().toLocaleTimeString().slice(0,5)}</span>
         </div>
 
-        {/* Image */}
+        {/* Icon/Symbol (Replaces Photo) */}
         {includeImage && (
-          <div className="mb-2 overflow-hidden border-2 border-black">
-            <img 
-              src={imageUrl} 
-              alt="Art" 
-              className="w-full h-auto block filter contrast-125 brightness-110"
-              crossOrigin="anonymous"
-            />
+          <div className="mb-4 flex justify-center items-center py-4 border-y-2 border-black border-dashed bg-gray-50">
+            {/* Renderiza o ícone da categoria bem grande como se fosse uma imagem */}
+            <span className="text-6xl filter grayscale opacity-80 leading-none">
+              {categoryIcon}
+            </span>
           </div>
         )}
 
         {/* Content */}
-        <div className="text-center mb-2 px-1">
+        <div className="text-center mb-4 px-2">
           {/* Main Text */}
-          <p className="text-xl font-black uppercase leading-none tracking-tight mb-2 text-black break-words whitespace-pre-wrap">
+          <p className="text-xl font-black uppercase leading-tight tracking-tight mb-3 text-black break-words whitespace-pre-wrap">
             {data.text}
           </p>
 
           {/* Translation (For Songs) */}
           {data.translation && (
-            <p className="text-xs font-bold text-gray-700 border-t border-dotted border-black pt-1 mt-1 mb-1 italic">
+            <p className="text-xs font-bold text-gray-700 border-t border-dotted border-black pt-2 mt-2 mb-2 italic">
               "{data.translation}"
             </p>
           )}
 
           {/* Answer (For Riddles) - UPSIDE DOWN */}
           {data.answer && (
-            <div className="mt-3 pt-2 border-t border-dashed border-black flex justify-center">
-               <p className="text-xs font-bold transform rotate-180 select-none bg-black text-white px-1">
+            <div className="mt-4 pt-2 border-t border-dashed border-black flex justify-center">
+               <p className="text-xs font-bold transform rotate-180 select-none bg-black text-white px-2 py-1 rounded-sm">
                  RESP: {data.answer}
                </p>
             </div>
           )}
 
           {/* Author */}
-          <p className="text-xs font-bold italic mt-2 inline-block px-2 border border-black rounded-sm">
+          <p className="text-xs font-bold italic mt-3 inline-block px-3 py-1 border border-black rounded-sm bg-gray-100">
             {data.authorOrSource}
           </p>
         </div>
 
-        {/* Footer */}
-        <div className="text-center text-[9px] font-bold border-t-2 border-black pt-1 mt-2">
-          <p>www.suaempresa.com.br</p>
+        {/* Footer: Contacts */}
+        <div className="text-center text-[9px] font-bold border-t-2 border-black pt-2 mt-2 pb-2 space-y-0.5">
+          <p>Whatsapp: 82 99607.7308</p>
+          <p>E-mail: avgraf@outlook.com</p>
         </div>
 
         {/* Cut Line (Visual only for web) */}
-        <div className="mt-4 border-b-2 border-dashed border-gray-400 w-full h-1 print:hidden"></div>
+        <div className="mt-2 border-b-2 border-dashed border-gray-300 w-full h-1 print:hidden"></div>
       </div>
 
       {/* Button for Individual Print (Below the receipt) */}
       <button 
         onClick={handlePrintIndividual}
-        className="mt-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold py-2 px-6 rounded-full shadow-md transition-all flex items-center gap-2 print:hidden"
+        className="mt-4 bg-slate-800 hover:bg-emerald-600 text-white text-xs font-bold py-3 px-8 rounded-full shadow-lg transition-all flex items-center gap-2 print:hidden transform hover:scale-105"
         title="Imprimir apenas este recibo"
       >
         <span>🖨️ Imprimir Este</span>

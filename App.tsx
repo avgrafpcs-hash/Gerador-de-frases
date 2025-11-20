@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Category, CATEGORIES, AppConfig, GeneratedContent } from './types';
 import { generateContent } from './services/geminiService';
 import ReceiptItem from './components/ReceiptItem';
@@ -12,10 +12,6 @@ const App: React.FC = () => {
   const [items, setItems] = useState<GeneratedContent[]>([]);
   const [loading, setLoading] = useState(false);
   
-  const handlePrintAll = () => {
-    window.print();
-  };
-
   const handleGenerate = async () => {
     if (!config.category) return;
     setLoading(true);
@@ -24,6 +20,9 @@ const App: React.FC = () => {
     setItems(newItems);
     setLoading(false);
   };
+
+  // Find the icon for the currently selected category to pass to the receipt
+  const currentCategoryIcon = CATEGORIES.find(c => c.id === config.category)?.icon || '✨';
 
   return (
     <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-slate-900 text-slate-100 font-sans">
@@ -85,7 +84,7 @@ const App: React.FC = () => {
               </div>
 
               <div className="flex-1">
-                  <p className="text-[10px] text-slate-500 mb-1">Imagem Ilustrativa</p>
+                  <p className="text-[10px] text-slate-500 mb-1">Símbolo do Tema</p>
                   <button
                     onClick={() => setConfig({ ...config, includeImage: !config.includeImage })}
                     className={`w-full py-1.5 px-2 rounded border text-xs font-bold flex items-center justify-center gap-2 transition-colors h-[34px] mt-auto
@@ -93,7 +92,7 @@ const App: React.FC = () => {
                         ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400' 
                         : 'border-slate-700 bg-slate-900 text-slate-500'}`}
                   >
-                    {config.includeImage ? 'COM Imagem' : 'SEM Imagem'}
+                    {config.includeImage ? 'Mostrar' : 'Ocultar'}
                   </button>
               </div>
             </div>
@@ -121,20 +120,11 @@ const App: React.FC = () => {
               </>
             )}
           </button>
-
-          {items.length > 0 && !loading && (
-            <button
-              onClick={handlePrintAll}
-              className="w-full py-3 bg-white hover:bg-gray-100 text-black rounded-lg font-bold text-sm uppercase tracking-wide shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
-            >
-              🖨️ Imprimir Tudo (Separação Automática)
-            </button>
-          )}
         </div>
       </div>
 
       {/* --- RIGHT PANEL: Grid Preview --- */}
-      <div className="flex-1 bg-gray-200 h-full overflow-y-auto p-4 md:p-6">
+      <div className="flex-1 bg-gray-200 h-full overflow-y-auto">
         
         {/* Empty State */}
         {items.length === 0 && !loading && (
@@ -146,7 +136,7 @@ const App: React.FC = () => {
 
         {/* Loading Skeletons Grid */}
         {loading && (
-           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 w-full max-w-[1400px] mx-auto">
+           <div className="p-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 w-full max-w-[1600px] mx-auto">
               {Array.from({ length: config.count }).map((_, i) => (
                  <div key={i} className="bg-white shadow-xl animate-pulse p-4 flex flex-col items-center gap-4 h-[400px]">
                     <div className="w-12 h-12 bg-gray-200 rounded-full mb-2"></div>
@@ -158,15 +148,16 @@ const App: React.FC = () => {
            </div>
         )}
 
-        {/* Results Grid - SHOW ALL AT ONCE */}
+        {/* Results Grid */}
         {items.length > 0 && !loading && (
-          <div className="print-area w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 w-full max-w-[1600px] mx-auto items-start">
+          <div className="print-area w-full p-8 md:p-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-12 w-full max-w-[1800px] mx-auto items-start">
               {items.map((item) => (
                 <div key={item.id} className="flex justify-center w-full">
                   <ReceiptItem 
                     data={item} 
                     includeImage={config.includeImage}
+                    categoryIcon={currentCategoryIcon}
                   />
                 </div>
               ))}

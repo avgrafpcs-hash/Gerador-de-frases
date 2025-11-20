@@ -3,13 +3,16 @@ import { COMPANY_LOGO_BASE64 } from '../logo';
 
 const Logo: React.FC = () => {
   return (
-    <div className="flex justify-center items-center mb-4">
-      <img 
-        src={COMPANY_LOGO_BASE64} 
-        alt="Logo Empresa" 
-        className="max-w-[80%] h-auto object-contain filter grayscale contrast-125"
-        style={{ maxHeight: '60px' }}
-      />
+    <div className="flex flex-col justify-center items-center mb-1">
+      {/* Container com altura fixa para evitar pulos de layout */}
+      <div className="h-16 flex items-center justify-center w-full">
+        <img 
+          src={COMPANY_LOGO_BASE64} 
+          alt="Logo Empresa" 
+          className="max-h-full max-w-[90%] object-contain" 
+          style={{ imageRendering: 'pixelated' }} 
+        />
+      </div>
     </div>
   );
 };
