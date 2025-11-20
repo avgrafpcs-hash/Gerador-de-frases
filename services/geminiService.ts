@@ -6,10 +6,8 @@ export const generateContent = async (
   count: number
 ): Promise<GeneratedContent[]> => {
   
-  // Robust API Key retrieval to prevent crashes
   const getApiKey = () => {
     if (typeof process !== 'undefined' && process.env && process.env.API_KEY) return process.env.API_KEY;
-    // Check standard Vite/framework env vars if process.env is missing/empty
     // @ts-ignore
     if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) return import.meta.env.VITE_API_KEY;
     // @ts-ignore
@@ -20,10 +18,10 @@ export const generateContent = async (
   const apiKey = getApiKey();
 
   if (!apiKey) {
-    console.error("API Key not found. Configure API_KEY in Vercel environment variables.");
+    console.error("API Key not found.");
     return Array.from({ length: count }).map((_, i) => ({
       id: `mock-${i}`,
-      text: "ERRO: Chave API não configurada. Adicione API_KEY nas variáveis de ambiente do Vercel.",
+      text: "ERRO: Chave API não configurada. Adicione VITE_API_KEY nas variáveis de ambiente.",
       authorOrSource: "Sistema",
       imageSeed: "error"
     }));
@@ -32,40 +30,51 @@ export const generateContent = async (
   const ai = new GoogleGenAI({ apiKey });
 
   let promptContext = "";
+  let extraInstructions = "";
+
   switch (category) {
     case 'religiosa':
-      promptContext = "mensagens bíblicas de esperança, fé e gratidão, ou versículos curtos e poderosos";
+      promptContext = "mensagens bíblicas de esperança, fé e gratidão";
       break;
     case 'pensadores':
-      promptContext = "frases de impacto sobre sucesso, liderança e vida de grandes pensadores mundiais";
+      promptContext = "frases de impacto sobre sucesso e liderança";
       break;
     case 'filosofos':
-      promptContext = "citações profundas e reflexivas de filósofos históricos (ex: Estoicismo, Gregos, Modernos)";
+      promptContext = "citações profundas e reflexivas de filósofos";
       break;
     case 'frames':
-      promptContext = "frases icônicas e inesquecíveis do cinema e da cultura pop";
+      promptContext = "frases icônicas do cinema e cultura pop";
       break;
     case 'versos':
-      promptContext = "poemas curtos, haicais ou versos românticos e inspiradores";
+      promptContext = "poemas curtos ou haicais inspiradores";
       break;
     case 'musicas':
-      promptContext = "trechos emocionantes de músicas brasileiras famosas (MPB, Rock Nacional, Samba)";
+      promptContext = "trechos de músicas famosas (Nacionais ou Internacionais Clássicas).";
+      extraInstructions = "Se a música for em Inglês, VOCÊ DEVE fornecer a tradução reduzida no campo 'translation'. Se for em português, deixe 'translation' vazio.";
+      break;
+    case 'piadas':
+      promptContext = "piadas curtas e inteligentes (sem conteúdo ofensivo)";
+      break;
+    case 'charadas':
+      promptContext = "charadas ou 'o que é o que é' desafiadoras";
+      extraInstructions = "Coloque a pergunta no campo 'text' e a resposta curta no campo 'answer'.";
+      break;
+    case 'curiosidades':
+      promptContext = "fatos curiosos e interessantes sobre o mundo ('Você sabia?')";
       break;
   }
 
-  // Add randomness to the prompt to ensure "unlimited" feeling
-  const randomizers = ["raras", "pouco conhecidas", "clássicas", "motivacionais", "reflexivas", "filosóficas"];
-  const randomStyle = randomizers[Math.floor(Math.random() * randomizers.length)];
-
   const prompt = `
-    Você é um gerador de conteúdo criativo. Gere ${count} ${promptContext}.
-    Estilo desejado: ${randomStyle}.
-    IMPORTANTE: Evite frases clichês ou muito repetitivas. Busque variedade.
-    O texto deve ser em Português do Brasil.
-    Para cada item, forneça:
-    1. O texto principal (máximo 200 caracteres para caber no papel).
-    2. O autor ou fonte.
-    3. Uma palavra-chave EM INGLÊS (imageSeed) que represente a emoção ou tema da frase para gerar uma imagem abstrata.
+    Gere ${count} itens de: ${promptContext}.
+    ${extraInstructions}
+    
+    REGRAS:
+    1. Texto principal curto (max 180 caracteres).
+    2. Variedade total (não repita temas).
+    3. 'imageSeed': uma palavra-chave em Inglês para gerar imagem.
+    4. 'authorOrSource': Autor, Banda ou Fonte.
+    
+    Retorne APENAS JSON.
   `;
 
   try {
@@ -73,7 +82,7 @@ export const generateContent = async (
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
-        temperature: 1.2, // High temperature for maximum variety and creativity
+        temperature: 1.3,
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -82,7 +91,9 @@ export const generateContent = async (
             properties: {
               text: { type: Type.STRING },
               authorOrSource: { type: Type.STRING },
-              imageSeed: { type: Type.STRING }
+              imageSeed: { type: Type.STRING },
+              translation: { type: Type.STRING, nullable: true },
+              answer: { type: Type.STRING, nullable: true }
             },
             required: ["text", "authorOrSource", "imageSeed"]
           }
@@ -99,15 +110,17 @@ export const generateContent = async (
       id: `gen-${Date.now()}-${index}`,
       text: item.text,
       authorOrSource: item.authorOrSource,
-      imageSeed: item.imageSeed || 'abstract'
+      imageSeed: item.imageSeed || 'abstract',
+      translation: item.translation,
+      answer: item.answer
     }));
 
   } catch (error) {
     console.error("Gemini API Error:", error);
     return Array.from({ length: count }).map((_, i) => ({
       id: `err-${i}`,
-      text: "Ocorreu um erro momentâneo na IA. Por favor, tente novamente em alguns segundos.",
-      authorOrSource: "Erro de Conexão",
+      text: "Erro ao conectar com a IA. Tente novamente.",
+      authorOrSource: "Erro",
       imageSeed: "error"
     }));
   }
