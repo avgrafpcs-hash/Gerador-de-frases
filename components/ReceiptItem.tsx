@@ -51,7 +51,7 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryI
         {includeImage && (
           <div className="mb-4 flex justify-center items-center py-4 border-y-2 border-black border-dashed bg-gray-50">
             {/* Renderiza o ícone da categoria bem grande como se fosse uma imagem */}
-            <span className="text-6xl filter grayscale opacity-100 leading-none">
+            <span className="text-6xl leading-none">
               {categoryIcon}
             </span>
           </div>

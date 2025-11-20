@@ -25,13 +25,13 @@ export interface AppConfig {
 }
 
 export const CATEGORIES: { id: Category; label: string; icon: string }[] = [
-  { id: 'religiosa', label: 'Religiosa', icon: '✝️' },
-  { id: 'pensadores', label: 'Pensadores', icon: '💡' },
-  { id: 'filosofos', label: 'Filósofos', icon: '🏛️' },
-  { id: 'frames', label: 'Famosas', icon: '🎬' },
-  { id: 'versos', label: 'Versos', icon: '📜' },
-  { id: 'musicas', label: 'Músicas', icon: '🎵' },
-  { id: 'piadas', label: 'Piadas', icon: '😂' },
+  { id: 'religiosa', label: 'Religiosa', icon: '✚' },
+  { id: 'pensadores', label: 'Pensadores', icon: '✒' },
+  { id: 'filosofos', label: 'Filósofos', icon: '⚖' },
+  { id: 'frames', label: 'Famosas', icon: '★' },
+  { id: 'versos', label: 'Versos', icon: '¶' },
+  { id: 'musicas', label: 'Músicas', icon: '♫' },
+  { id: 'piadas', label: 'Piadas', icon: '☺' },
   { id: 'charadas', label: 'Charadas', icon: '❓' },
-  { id: 'curiosidades', label: 'Curiosidades', icon: '🤓' },
+  { id: 'curiosidades', label: 'Curiosidades', icon: '🔎' },
 ];
