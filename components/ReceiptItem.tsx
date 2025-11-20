@@ -74,7 +74,7 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryI
           {/* Answer (For Riddles) - UPSIDE DOWN */}
           {data.answer && (
             <div className="mt-4 pt-2 border-t border-dashed border-black flex justify-center">
-               <p className="text-xs font-bold transform rotate-180 select-none bg-black text-white px-2 py-1 rounded-sm">
+               <p className="text-xs font-bold transform rotate-180 select-none text-black border-2 border-dashed border-black px-2 py-1">
                  RESP: {data.answer}
                </p>
             </div>
