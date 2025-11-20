@@ -11,55 +11,52 @@ interface ReceiptItemProps {
 }
 
 const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, showCutLine, className = '' }) => {
-  // Using picsum with seed for consistent images, grayscale + high contrast for thermal simulation
-  const imageUrl = `https://picsum.photos/seed/${data.imageSeed}/380/280?grayscale`;
+  const imageUrl = `https://picsum.photos/seed/${data.imageSeed}/380/250?grayscale`;
 
   return (
-    <div className={`bg-white text-black font-mono p-4 mx-auto shadow-sm ${PAPER_WIDTH_CLASS} ${className}`}>
+    <div className={`bg-white text-black font-mono p-2 mx-auto shadow-sm ${PAPER_WIDTH_CLASS} ${className}`}>
       
-      {/* Branding Header */}
-      <Logo />
+      {/* Compact Header */}
+      <div className="transform scale-75 origin-top -mb-2">
+        <Logo />
+      </div>
       
-      {/* Date/Time */}
-      <div className="text-center text-xs mb-6 border-b-2 border-black pb-2 font-bold">
-        <p>{new Date().toLocaleDateString()} - {new Date().toLocaleTimeString().slice(0,5)}</p>
-        <p className="mt-1">*** MENSAGEM DO DIA ***</p>
+      {/* Compact Date */}
+      <div className="text-center text-[10px] leading-tight mb-2 border-b border-black pb-1 font-bold">
+        <span>{new Date().toLocaleDateString()} • {new Date().toLocaleTimeString().slice(0,5)}</span>
       </div>
 
-      {/* Optional Image */}
+      {/* Image - Reduced Margin */}
       {includeImage && (
-        <div className="mb-6 overflow-hidden border-2 border-black">
+        <div className="mb-3 overflow-hidden border-2 border-black">
           <img 
             src={imageUrl} 
-            alt="Illustration" 
-            className="w-full h-auto block filter contrast-150 brightness-100"
+            alt="Art" 
+            className="w-full h-auto block filter contrast-125 brightness-110"
             crossOrigin="anonymous"
           />
         </div>
       )}
 
-      {/* Content - LARGE TEXT for legibility */}
-      <div className="text-center mb-8">
-        <p className="text-3xl font-black uppercase leading-snug tracking-tight mb-4 break-words text-black">
-          "{data.text}"
+      {/* Content - Compact Vertical Spacing but LARGE Text */}
+      <div className="text-center mb-3 px-1">
+        <p className="text-2xl font-black uppercase leading-none tracking-tighter mb-2 text-black">
+          {data.text}
         </p>
-        <p className="text-lg font-bold italic mt-2 border-t border-black inline-block px-4 pt-1">
+        <p className="text-sm font-bold italic mt-1 inline-block px-2">
           — {data.authorOrSource}
         </p>
       </div>
 
-      {/* Footer */}
-      <div className="text-center text-xs font-bold border-t-2 border-black pt-2 pb-4">
-        <p>Obrigado pela preferência!</p>
-        <p className="text-[10px] mt-1">www.suaempresa.com.br</p>
+      {/* Compact Footer */}
+      <div className="text-center text-[10px] font-bold border-t border-black pt-1">
+        <p>www.suaempresa.com.br</p>
       </div>
 
-      {/* Cut Line Visual */}
+      {/* Minimal Cut Line */}
       {showCutLine && (
-        <div className="mt-10 mb-4 border-b-4 border-dotted border-gray-800 w-full relative h-4">
-          <span className="absolute top-[-14px] left-1/2 transform -translate-x-1/2 bg-white px-2 text-xl">
-            ✂️
-          </span>
+        <div className="mt-6 mb-0 border-b-2 border-dotted border-gray-400 w-full relative h-2 flex justify-center">
+          <span className="bg-white px-1 text-xs text-gray-500 relative -top-3">✂️</span>
         </div>
       )}
     </div>

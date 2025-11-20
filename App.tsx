@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { Category, CATEGORIES, AppConfig, GeneratedContent } from './types';
 import { generateContent } from './services/geminiService';
 import ReceiptItem from './components/ReceiptItem';
-import Logo from './components/Logo';
 
 const App: React.FC = () => {
   const [config, setConfig] = useState<AppConfig>({
@@ -16,7 +15,6 @@ const App: React.FC = () => {
   
   const printRef = useRef<HTMLDivElement>(null);
 
-  // Handling print action
   const handlePrint = () => {
     window.print();
   };
@@ -24,190 +22,184 @@ const App: React.FC = () => {
   const handleGenerate = async () => {
     if (!config.category) return;
     setLoading(true);
-    setItems([]); // Clear previous
+    // Keep items visible while loading new ones or clear them? 
+    // Let's clear to show loading state clearly in the preview area.
+    setItems([]); 
     
     const newItems = await generateContent(config.category, config.count);
     setItems(newItems);
     setLoading(false);
   };
 
-  // Helper to reset selection
-  const reset = () => {
-    setItems([]);
-    setConfig(prev => ({ ...prev, category: null }));
-  };
-
   return (
-    <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-slate-900">
+    <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-slate-900 text-slate-100 font-sans">
       
-      {/* --- LEFT PANEL: Controls (Hidden on print) --- */}
-      <div className="w-full md:w-1/2 lg:w-5/12 p-6 bg-slate-900 text-white h-full overflow-y-auto no-print border-r border-slate-800">
-        <div className="max-w-xl mx-auto pb-20">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="bg-white p-1 rounded">
-             {/* Small preview of logo in header */}
-             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2NkwA7+M/zHgFyGmOQZwwDInF9I0oBfM9CV4zUDWjOgm4FwM2A0DQAAAB03IAH1gV2bAAAAAElFTkSuQmCC" className="w-6 h-6 opacity-50" alt="icon" />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight">Thermal AI Generator</h1>
+      {/* --- LEFT PANEL: Controls (Compact & Always Visible) --- */}
+      <div className="w-full md:w-[400px] lg:w-[450px] flex flex-col h-full border-r border-slate-800 bg-slate-900 shadow-2xl z-10 no-print shrink-0">
+        
+        {/* Header Compacto */}
+        <div className="p-4 border-b border-slate-800 flex items-center gap-3 bg-slate-900">
+          <div className="bg-emerald-500/10 p-2 rounded-lg text-2xl">🖨️</div>
+          <div>
+            <h1 className="font-bold text-lg leading-none text-white">Gerador Térmico</h1>
+            <p className="text-xs text-slate-500 mt-0.5">Configure e gere frases ilimitadas</p>
           </div>
+        </div>
 
-          {/* Step 1: Category Selection */}
-          {!items.length && (
-            <div className="space-y-6 animate-fade-in">
-              <section>
-                <h2 className="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-4">1. Escolha o Tema</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setConfig({ ...config, category: cat.id })}
-                      className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2
-                        ${config.category === cat.id 
-                          ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.2)]' 
-                          : 'border-slate-700 hover:border-slate-500 hover:bg-slate-800 text-slate-300'}`}
-                    >
-                      <span className="text-3xl">{cat.icon}</span>
-                      <span className="font-medium">{cat.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </section>
-
-              <section>
-                <h2 className="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-4">2. Configurações</h2>
-                
-                <div className="bg-slate-800 rounded-xl p-6 space-y-6 border border-slate-700">
-                  {/* Count Selector */}
-                  <div>
-                    <label className="block text-sm font-medium mb-3">Quantidade de Mensagens</label>
-                    <div className="flex bg-slate-900 p-1 rounded-lg">
-                      {[1, 2, 4].map((num) => (
-                        <button
-                          key={num}
-                          onClick={() => setConfig({ ...config, count: num as 1|2|4 })}
-                          className={`flex-1 py-2 rounded-md text-sm font-bold transition-all
-                            ${config.count === num ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'}`}
-                        >
-                          {num}x
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Image Toggle */}
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">Incluir Imagem Ilustrativa</label>
-                    <button
-                      onClick={() => setConfig({ ...config, includeImage: !config.includeImage })}
-                      className={`w-14 h-7 rounded-full p-1 transition-colors duration-300 ${config.includeImage ? 'bg-emerald-500' : 'bg-slate-600'}`}
-                    >
-                      <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ${config.includeImage ? 'translate-x-7' : ''}`} />
-                    </button>
-                  </div>
-
-                  {/* Print Mode */}
-                  <div className="pt-4 border-t border-slate-700">
-                    <label className="block text-sm font-medium mb-3">Modo de Impressão</label>
-                    <div className="grid grid-cols-2 gap-3">
-                      <button
-                        onClick={() => setConfig({ ...config, printMode: 'separate' })}
-                        className={`px-3 py-2 text-xs rounded border ${config.printMode === 'separate' ? 'border-emerald-500 text-emerald-400 bg-emerald-900/20' : 'border-slate-600 text-slate-400'}`}
-                      >
-                        ✂️ Separadas (Corte)
-                      </button>
-                      <button
-                        onClick={() => setConfig({ ...config, printMode: 'together' })}
-                        className={`px-3 py-2 text-xs rounded border ${config.printMode === 'together' ? 'border-emerald-500 text-emerald-400 bg-emerald-900/20' : 'border-slate-600 text-slate-400'}`}
-                      >
-                        📄 Contínuas (Lista)
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <button
-                disabled={!config.category || loading}
-                onClick={handleGenerate}
-                className={`w-full py-4 rounded-xl font-bold text-lg uppercase tracking-wide shadow-lg transition-all
-                  ${!config.category || loading 
-                    ? 'bg-slate-700 text-slate-500 cursor-not-allowed' 
-                    : 'bg-emerald-500 hover:bg-emerald-400 text-white hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] transform hover:-translate-y-1'}`}
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Gerando com IA...
-                  </span>
-                ) : 'Gerar Recibos'}
-              </button>
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-5 custom-scrollbar">
+          
+          {/* 1. Categories - Grid Compacto de 3 Colunas */}
+          <section>
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">1. Tema</label>
+            <div className="grid grid-cols-3 gap-2">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setConfig({ ...config, category: cat.id })}
+                  className={`p-2 rounded-lg border transition-all duration-150 flex flex-col items-center gap-1 text-center
+                    ${config.category === cat.id 
+                      ? 'border-emerald-500 bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500' 
+                      : 'border-slate-700 hover:border-slate-500 hover:bg-slate-800 text-slate-400'}`}
+                >
+                  <span className="text-xl">{cat.icon}</span>
+                  <span className="text-[10px] font-bold leading-tight">{cat.label}</span>
+                </button>
+              ))}
             </div>
-          )}
+          </section>
 
-          {/* Post-Generation Actions */}
-          {items.length > 0 && !loading && (
-            <div className="space-y-4 animate-slide-up">
-              <div className="bg-emerald-900/30 border border-emerald-500/30 p-4 rounded-lg text-emerald-200 mb-6">
-                <h3 className="font-bold flex items-center gap-2">
-                  <span className="text-xl">✅</span> {items.length} Mensagens Geradas!
-                </h3>
-                <p className="text-sm opacity-80 mt-1">Visualize a prévia ao lado (ou abaixo no celular). Ajuste o zoom do navegador se necessário.</p>
+          {/* 2. Settings - Compact Row */}
+          <section className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+            <div className="flex justify-between items-center mb-3">
+               <label className="text-xs font-bold text-slate-400 uppercase">2. Opções</label>
+            </div>
+            
+            <div className="space-y-3">
+              {/* Row: Count & Image */}
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <p className="text-[10px] text-slate-500 mb-1">Quantidade</p>
+                  <div className="flex bg-slate-900 rounded p-1 border border-slate-700">
+                    {[1, 2, 4].map((num) => (
+                      <button
+                        key={num}
+                        onClick={() => setConfig({ ...config, count: num as 1|2|4 })}
+                        className={`flex-1 py-1 text-xs font-bold rounded transition-colors
+                          ${config.count === num ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:text-slate-300'}`}
+                      >
+                        {num}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex-1">
+                   <p className="text-[10px] text-slate-500 mb-1">Imagem</p>
+                   <button
+                      onClick={() => setConfig({ ...config, includeImage: !config.includeImage })}
+                      className={`w-full py-1.5 px-2 rounded border text-xs font-bold flex items-center justify-center gap-2 transition-colors
+                        ${config.includeImage 
+                          ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400' 
+                          : 'border-slate-700 bg-slate-900 text-slate-500'}`}
+                    >
+                      {config.includeImage ? '✅ Sim' : '❌ Não'}
+                    </button>
+                </div>
               </div>
 
-              <button
-                onClick={handlePrint}
-                className="w-full py-4 bg-white text-black rounded-xl font-bold text-lg uppercase tracking-wide shadow-xl hover:bg-gray-100 flex items-center justify-center gap-2"
-              >
-                🖨️ Imprimir Agora
-              </button>
-              
-              <button
-                onClick={reset}
-                className="w-full py-3 bg-transparent border-2 border-slate-600 text-slate-300 rounded-xl font-semibold hover:border-white hover:text-white transition-colors"
-              >
-                🔄 Gerar Novas
-              </button>
+              {/* Row: Mode */}
+              <div>
+                <p className="text-[10px] text-slate-500 mb-1">Modo de Impressão</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setConfig({ ...config, printMode: 'separate' })}
+                    className={`flex-1 py-1.5 text-[10px] font-bold uppercase rounded border text-center
+                      ${config.printMode === 'separate' ? 'border-blue-500/50 bg-blue-500/10 text-blue-400' : 'border-slate-700 text-slate-500'}`}
+                  >
+                    ✂️ Corte (Individual)
+                  </button>
+                  <button
+                    onClick={() => setConfig({ ...config, printMode: 'together' })}
+                    className={`flex-1 py-1.5 text-[10px] font-bold uppercase rounded border text-center
+                      ${config.printMode === 'together' ? 'border-blue-500/50 bg-blue-500/10 text-blue-400' : 'border-slate-700 text-slate-500'}`}
+                  >
+                    📄 Lista (Contínuo)
+                  </button>
+                </div>
+              </div>
             </div>
+          </section>
+        </div>
+
+        {/* Footer Actions - Fixed at Bottom */}
+        <div className="p-4 bg-slate-900 border-t border-slate-800 space-y-3">
+          
+          <button
+            disabled={!config.category || loading}
+            onClick={handleGenerate}
+            className={`w-full py-3 rounded-lg font-bold text-sm uppercase tracking-wide shadow-lg transition-all flex items-center justify-center gap-2
+              ${!config.category || loading 
+                ? 'bg-slate-800 text-slate-600 cursor-not-allowed' 
+                : 'bg-emerald-500 hover:bg-emerald-400 text-white hover:shadow-emerald-500/20 active:scale-95'}`}
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Criando...</span>
+              </>
+            ) : (
+              <>
+                <span>✨ Gerar Frases</span>
+              </>
+            )}
+          </button>
+
+          {items.length > 0 && !loading && (
+            <button
+              onClick={handlePrint}
+              className="w-full py-3 bg-white hover:bg-gray-100 text-black rounded-lg font-bold text-sm uppercase tracking-wide shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+            >
+              🖨️ Imprimir ({items.length})
+            </button>
           )}
         </div>
       </div>
 
-      {/* --- RIGHT PANEL: Preview (Visible on screen, reformatted on print) --- */}
-      <div className="w-full md:w-1/2 lg:w-7/12 bg-gray-200 flex justify-center p-8 md:p-12 h-full overflow-y-auto relative">
+      {/* --- RIGHT PANEL: Preview Area --- */}
+      <div className="flex-1 bg-gray-100 h-full overflow-y-auto relative flex justify-center p-4 md:p-8">
         
-        {/* Visual Hint Background */}
+        {/* Placeholder State */}
         {items.length === 0 && !loading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 pointer-events-none select-none p-4 text-center">
-            <span className="text-6xl mb-4 opacity-20">🖨️</span>
-            <p className="text-lg font-medium opacity-50">O recibo gerado aparecerá aqui</p>
-            <p className="text-sm opacity-40">Formato 80mm Térmico</p>
+          <div className="self-center text-center opacity-30 select-none">
+            <div className="text-6xl mb-4 grayscale">🖨️</div>
+            <p className="text-xl font-bold text-slate-800">Aguardando geração...</p>
+            <p className="text-sm text-slate-600">Selecione um tema e clique em gerar</p>
           </div>
         )}
 
-        {/* Actual Print Content Area */}
-        {(items.length > 0 || loading) && (
-          <div id="print-container" className="relative print-area pb-20">
-            {loading && (
-               <div className="w-[80mm] h-[400px] bg-white animate-pulse flex flex-col items-center justify-center gap-4 shadow-2xl">
-                  <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
-                  <div className="w-3/4 h-4 bg-gray-200 rounded"></div>
-                  <div className="w-1/2 h-4 bg-gray-200 rounded"></div>
-               </div>
-            )}
+        {/* Loading Placeholder */}
+        {loading && (
+           <div className="w-[80mm] bg-white shadow-xl animate-pulse self-start mt-4 min-h-[300px] p-4 flex flex-col items-center gap-4">
+              <div className="w-12 h-12 bg-gray-200 rounded-full mb-2"></div>
+              <div className="w-full h-3 bg-gray-200 rounded"></div>
+              <div className="w-3/4 h-3 bg-gray-200 rounded"></div>
+              <div className="w-full h-32 bg-gray-200 rounded mt-2"></div>
+              <div className="w-full h-4 bg-gray-200 rounded mt-2"></div>
+           </div>
+        )}
 
-            {/* The list to be printed */}
+        {/* Results List */}
+        {(items.length > 0 || loading) && (
+          <div id="print-container" className={`print-area pb-20 ${loading ? 'hidden' : 'block'}`}>
             <div ref={printRef}>
               {items.map((item, index) => (
                 <div key={item.id} style={{ pageBreakAfter: config.printMode === 'separate' ? 'always' : 'auto' }}>
                   <ReceiptItem 
                     data={item} 
                     includeImage={config.includeImage}
-                    // Only show visual cut line if separate mode and not the last item (unless printing separate pages handles it naturally)
-                    // Actually for web preview, a margin is nice.
-                    className={config.printMode === 'together' ? 'mb-8 border-b-4 border-double border-black pb-8' : 'mb-16 print:mb-0'}
+                    // Compact spacing for "together" mode
+                    className={config.printMode === 'together' ? 'mb-4 border-b-2 border-dashed border-gray-300 pb-4' : 'mb-8 print:mb-0'}
                     showCutLine={config.printMode === 'separate' && index < items.length - 1}
                   />
                 </div>
@@ -216,7 +208,6 @@ const App: React.FC = () => {
           </div>
         )}
       </div>
-
     </div>
   );
 };
