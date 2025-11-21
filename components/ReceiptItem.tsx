@@ -60,7 +60,7 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryI
         {/* Content */}
         <div className="text-center mb-4 px-2">
           {/* Main Text */}
-          <p className="text-xl print:text-lg font-black uppercase leading-tight tracking-tight mb-3 text-black break-words whitespace-pre-wrap">
+          <p className="font-sans text-xl print:text-lg font-black uppercase leading-tight tracking-tight mb-3 text-black break-words whitespace-pre-wrap">
             {data.text}
           </p>
 
