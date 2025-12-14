@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { GeneratedContent } from '../types';
 import Logo from './Logo';
@@ -6,9 +7,10 @@ interface ReceiptItemProps {
   data: GeneratedContent;
   includeImage: boolean;
   categoryIcon: string;
+  title: string;
 }
 
-const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryIcon }) => {
+const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryIcon, title }) => {
   
   const handlePrintIndividual = () => {
     // Sets classes to hide other elements during print
@@ -32,13 +34,13 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryI
         style={{ width: '76mm', maxWidth: '100%' }} 
       >
         
-        {/* Header: Logo & Frase do Dia */}
+        {/* Header: Logo & Título Dinâmico */}
         <div className="flex flex-col items-center mb-2 pt-2">
           <div className="transform scale-90 origin-top">
             <Logo />
           </div>
-          <h2 className="text-sm font-black uppercase tracking-widest border-b-2 border-black pb-0.5 mt-1">
-            Frase do Dia
+          <h2 className="text-sm font-black uppercase tracking-widest border-b-2 border-black pb-0.5 mt-1 text-center">
+            {title}
           </h2>
         </div>
         
@@ -80,7 +82,7 @@ const ReceiptItem: React.FC<ReceiptItemProps> = ({ data, includeImage, categoryI
             </div>
           )}
 
-          {/* Author */}
+          {/* Author / Source / Moral */}
           <p className="text-xs font-bold italic mt-3 inline-block px-3 py-1 border border-black rounded-sm bg-gray-100">
             {data.authorOrSource}
           </p>

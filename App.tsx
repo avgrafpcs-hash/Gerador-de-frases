@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Category, CATEGORIES, AppConfig, GeneratedContent } from './types';
 import { generateContent } from './services/geminiService';
@@ -22,7 +23,19 @@ const App: React.FC = () => {
   };
 
   // Find the icon for the currently selected category to pass to the receipt
-  const currentCategoryIcon = CATEGORIES.find(c => c.id === config.category)?.icon || '✨';
+  const currentCategoryObj = CATEGORIES.find(c => c.id === config.category);
+  const currentCategoryIcon = currentCategoryObj?.icon || '✨';
+  
+  // Determine Receipt Title based on Category
+  const getReceiptTitle = (cat: Category | null) => {
+    if (cat === 'historinhas') return 'HISTÓRIA INFANTIL';
+    if (cat === 'biblico') return 'MOMENTO DE FÉ';
+    if (cat === 'charadas') return 'DESAFIO DO DIA';
+    if (cat === 'piadas') return 'HUMOR DO DIA';
+    return 'FRASE DO DIA';
+  };
+
+  const receiptTitle = getReceiptTitle(config.category);
 
   return (
     <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-slate-900 text-slate-100 font-sans">
@@ -112,7 +125,7 @@ const App: React.FC = () => {
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Criando Frases...</span>
+                <span>Criando...</span>
               </>
             ) : (
               <>
@@ -158,6 +171,7 @@ const App: React.FC = () => {
                     data={item} 
                     includeImage={config.includeImage}
                     categoryIcon={currentCategoryIcon}
+                    title={receiptTitle}
                   />
                 </div>
               ))}

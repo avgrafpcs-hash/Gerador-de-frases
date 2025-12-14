@@ -1,13 +1,16 @@
+
 export type Category = 
   | 'religiosa' 
   | 'pensadores' 
   | 'filosofos' 
   | 'frames' 
   | 'versos' 
-  | 'musicas'
-  | 'piadas'
-  | 'charadas'
-  | 'curiosidades';
+  | 'musicas' 
+  | 'piadas' 
+  | 'charadas' 
+  | 'curiosidades'
+  | 'historinhas'
+  | 'biblico';
 
 export interface GeneratedContent {
   id: string;
@@ -34,4 +37,6 @@ export const CATEGORIES: { id: Category; label: string; icon: string }[] = [
   { id: 'piadas', label: 'Piadas', icon: '☺' },
   { id: 'charadas', label: 'Charadas', icon: '❔' },
   { id: 'curiosidades', label: 'Curiosidades', icon: '🔎' },
+  { id: 'historinhas', label: 'Histórinhas', icon: '🧸' },
+  { id: 'biblico', label: 'Palavra de Fé', icon: '📖' },
 ];

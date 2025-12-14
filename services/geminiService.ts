@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { Category, GeneratedContent } from "../types";
 
@@ -34,22 +35,22 @@ export const generateContent = async (
 
   switch (category) {
     case 'religiosa':
-      promptContext = "mensagens bíblicas de esperança, fé e gratidão";
+      promptContext = "mensagens bíblicas curtas de esperança, fé e gratidão";
       break;
     case 'pensadores':
-      promptContext = "frases de impacto sobre sucesso e liderança";
+      promptContext = "frases curtas de impacto sobre sucesso e liderança";
       break;
     case 'filosofos':
-      promptContext = "citações profundas e reflexivas de filósofos";
+      promptContext = "citações curtas profundas e reflexivas de filósofos";
       break;
     case 'frames':
-      promptContext = "frases icônicas do cinema e cultura pop";
+      promptContext = "frases curtas icônicas do cinema e cultura pop";
       break;
     case 'versos':
       promptContext = "poemas curtos ou haicais inspiradores";
       break;
     case 'musicas':
-      promptContext = "trechos de músicas famosas (Nacionais ou Internacionais Clássicas).";
+      promptContext = "trechos curtos de músicas famosas (Nacionais ou Internacionais Clássicas).";
       extraInstructions = "Se a música for em Inglês, VOCÊ DEVE fornecer a tradução reduzida no campo 'translation'. Se for em português, deixe 'translation' vazio.";
       break;
     case 'piadas':
@@ -62,17 +63,41 @@ export const generateContent = async (
     case 'curiosidades':
       promptContext = "fatos curiosos e interessantes sobre o mundo ('Você sabia?')";
       break;
+    case 'historinhas':
+      promptContext = "historinhas infantis simples e educativas (12 a 20 linhas totais)";
+      extraInstructions = `
+        Foco: Simplicidade visual, boa legibilidade para impressora térmica 80mm e apelo emocional.
+        Público: Crianças de 4 a 9 anos.
+        Temas: Amizade, Respeito, Obediência, Gratidão, Bondade.
+        Estrutura Obrigatória:
+        1. No campo 'text': Inclua um Título chamativo no topo, seguido de uma pequena figura simples (ASCII ou Emoji como 🐶, 🐱, ⭐), e depois a história. Use quebras de linha frequentes. Evite parágrafos longos. Texto centralizado visualmente.
+        2. No campo 'authorOrSource': Escreva APENAS a 'MORAL DA HISTÓRIA'.
+        3. 'imageSeed': Palavra chave para gerar imagem do tema.
+      `;
+      break;
+    case 'biblico':
+      promptContext = "passagens bíblicas motivacionais com reflexão (10 a 18 linhas totais)";
+      extraInstructions = `
+        Foco: Esperança, Fé, Coragem, Confiança em Deus.
+        Estrutura Obrigatória:
+        1. No campo 'text': Inclua símbolos simples no topo (ex: ✝, ✨, 🙏). Coloque o versículo (livre adaptação) e em seguida uma Breve Reflexão ou Aplicação Prática. Use quebras de linha frequentes para facilitar leitura em papel estreito.
+        2. No campo 'authorOrSource': Escreva APENAS a Referência Bíblica (ex: Salmos 23:1).
+        3. 'imageSeed': Palavra chave do tema.
+      `;
+      break;
   }
 
   const prompt = `
-    Gere ${count} itens de: ${promptContext}.
+    Você é um especialista em conteúdo para impressoras térmicas 80mm.
+    Gere ${count} itens únicos de: ${promptContext}.
     ${extraInstructions}
     
-    REGRAS:
-    1. Texto principal curto (max 180 caracteres).
-    2. Variedade total (não repita temas).
-    3. 'imageSeed': uma palavra-chave em Inglês para gerar imagem.
-    4. 'authorOrSource': Autor, Banda ou Fonte.
+    REGRAS GERAIS:
+    1. Para categorias comuns (não historinhas/biblico), mantenha texto curto (max 180 caracteres).
+    2. Para 'historinhas' e 'biblico', siga estritamente o tamanho solicitado (mais longo).
+    3. Variedade total (não repita temas).
+    4. 'imageSeed': uma palavra-chave em Inglês para gerar imagem.
+    5. 'authorOrSource': Autor, Banda, Fonte, Referência ou Moral.
     
     Retorne APENAS JSON.
   `;
