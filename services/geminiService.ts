@@ -1,4 +1,5 @@
 
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { Category, GeneratedContent } from "../types";
 
@@ -59,6 +60,10 @@ export const generateContent = async (
     case 'charadas':
       promptContext = "charadas ou 'o que é o que é' desafiadoras";
       extraInstructions = "Coloque a pergunta no campo 'text' e a resposta curta no campo 'answer'.";
+      break;
+    case 'matematica':
+      promptContext = "desafios matemáticos divertidos, problemas de lógica ou sequências numéricas";
+      extraInstructions = "Coloque o problema/pergunta no campo 'text' e APENAS o resultado final no campo 'answer'. Tente variar entre cálculo mental e lógica.";
       break;
     case 'curiosidades':
       promptContext = "fatos curiosos e interessantes sobre o mundo ('Você sabia?')";

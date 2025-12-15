@@ -1,4 +1,5 @@
 
+
 export type Category = 
   | 'religiosa' 
   | 'pensadores' 
@@ -10,7 +11,8 @@ export type Category =
   | 'charadas' 
   | 'curiosidades'
   | 'historinhas'
-  | 'biblico';
+  | 'biblico'
+  | 'matematica';
 
 export interface GeneratedContent {
   id: string;
@@ -36,6 +38,7 @@ export const CATEGORIES: { id: Category; label: string; icon: string }[] = [
   { id: 'musicas', label: 'Músicas', icon: '♫' },
   { id: 'piadas', label: 'Piadas', icon: '☺' },
   { id: 'charadas', label: 'Charadas', icon: '❔' },
+  { id: 'matematica', label: 'Matemática', icon: '🔢' },
   { id: 'curiosidades', label: 'Curiosidades', icon: '🔎' },
   { id: 'historinhas', label: 'Histórinhas', icon: '🧸' },
   { id: 'biblico', label: 'Palavra de Fé', icon: '📖' },

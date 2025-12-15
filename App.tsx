@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Category, CATEGORIES, AppConfig, GeneratedContent } from './types';
 import { generateContent } from './services/geminiService';
@@ -32,6 +33,7 @@ const App: React.FC = () => {
     if (cat === 'biblico') return 'MOMENTO DE FÉ';
     if (cat === 'charadas') return 'DESAFIO DO DIA';
     if (cat === 'piadas') return 'HUMOR DO DIA';
+    if (cat === 'matematica') return 'DESAFIO MATEMÁTICO';
     return 'FRASE DO DIA';
   };
 
