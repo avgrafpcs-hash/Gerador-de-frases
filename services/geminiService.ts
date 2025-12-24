@@ -23,7 +23,7 @@ export const generateContent = async (
     console.error("API Key not found.");
     return Array.from({ length: count }).map((_, i) => ({
       id: `mock-${i}`,
-      text: "ERRO: Chave API não configurada. Adicione VITE_API_KEY nas variáveis de ambiente.",
+      text: "ERRO: Chave API não configurada.",
       authorOrSource: "Sistema",
       imageSeed: "error"
     }));
@@ -51,60 +51,55 @@ export const generateContent = async (
       promptContext = "poemas curtos ou haicais inspiradores";
       break;
     case 'musicas':
-      promptContext = "trechos curtos de músicas famosas (Nacionais ou Internacionais Clássicas).";
-      extraInstructions = "Se a música for em Inglês, VOCÊ DEVE fornecer a tradução reduzida no campo 'translation'. Se for em português, deixe 'translation' vazio.";
+      promptContext = "trechos curtos de músicas famosas.";
+      extraInstructions = "Se em Inglês, forneça tradução no campo 'translation'.";
       break;
     case 'piadas':
-      promptContext = "piadas curtas e inteligentes (sem conteúdo ofensivo)";
+      promptContext = "piadas curtas e inteligentes";
       break;
     case 'charadas':
-      promptContext = "charadas ou 'o que é o que é' desafiadoras";
-      extraInstructions = "Coloque a pergunta no campo 'text' e a resposta curta no campo 'answer'.";
+      promptContext = "charadas desafiadoras";
+      extraInstructions = "Pergunta em 'text', resposta em 'answer'.";
       break;
     case 'matematica':
-      promptContext = "desafios matemáticos divertidos, problemas de lógica ou sequências numéricas";
-      extraInstructions = "Coloque o problema/pergunta no campo 'text' e APENAS o resultado final no campo 'answer'. Tente variar entre cálculo mental e lógica.";
+      promptContext = "desafios matemáticos divertidos ou lógica";
+      extraInstructions = "Problema em 'text', resultado em 'answer'.";
+      break;
+    case 'megasena':
+      promptContext = "um jogo da sorte para a Mega-Sena";
+      extraInstructions = "Gere 6 números únicos entre 01 e 60. Formate os números com zeros à esquerda (ex: 05, 12, 44) e espaços amplos entre eles. No campo 'authorOrSource', escreva uma frase curta de boa sorte.";
+      break;
+    case 'quina':
+      promptContext = "um jogo da sorte para a Quina";
+      extraInstructions = "Gere 5 números únicos entre 01 e 80. Formate os números com zeros à esquerda e espaços. No campo 'authorOrSource', escreva uma frase curta de boa sorte.";
+      break;
+    case 'lotofacil':
+      promptContext = "um jogo da sorte para a Lotofácil";
+      extraInstructions = "Gere 15 números únicos entre 01 e 25. Formate os números em 3 linhas de 5 números para caber bem no papel 80mm. No campo 'authorOrSource', escreva uma frase curta de boa sorte.";
       break;
     case 'curiosidades':
-      promptContext = "fatos curiosos e interessantes sobre o mundo ('Você sabia?')";
+      promptContext = "fatos curiosos e interessantes ('Você sabia?')";
       break;
     case 'historinhas':
-      promptContext = "historinhas infantis simples e educativas (12 a 20 linhas totais)";
-      extraInstructions = `
-        Foco: Simplicidade visual, boa legibilidade para impressora térmica 80mm e apelo emocional.
-        Público: Crianças de 4 a 9 anos.
-        Temas: Amizade, Respeito, Obediência, Gratidão, Bondade.
-        Estrutura Obrigatória:
-        1. No campo 'text': Inclua um Título chamativo no topo, seguido de uma pequena figura simples (ASCII ou Emoji como 🐶, 🐱, ⭐), e depois a história. Use quebras de linha frequentes. Evite parágrafos longos. Texto centralizado visualmente.
-        2. No campo 'authorOrSource': Escreva APENAS a 'MORAL DA HISTÓRIA'.
-        3. 'imageSeed': Palavra chave para gerar imagem do tema.
-      `;
+      promptContext = "historinhas infantis educativas (12 a 20 linhas)";
       break;
     case 'biblico':
-      promptContext = "passagens bíblicas motivacionais com reflexão (10 a 18 linhas totais)";
-      extraInstructions = `
-        Foco: Esperança, Fé, Coragem, Confiança em Deus.
-        Estrutura Obrigatória:
-        1. No campo 'text': Inclua símbolos simples no topo (ex: ✝, ✨, 🙏). Coloque o versículo (livre adaptação) e em seguida uma Breve Reflexão ou Aplicação Prática. Use quebras de linha frequentes para facilitar leitura em papel estreito.
-        2. No campo 'authorOrSource': Escreva APENAS a Referência Bíblica (ex: Salmos 23:1).
-        3. 'imageSeed': Palavra chave do tema.
-      `;
+      promptContext = "passagens bíblicas motivacionais com reflexão";
       break;
   }
 
-  const keywordPrompt = keyword ? `\nIMPORTANTE: Foque o conteúdo especificamente no seguinte tema/palavra-chave: "${keyword}". Se a palavra-chave for incompatível com a categoria, tente fazer uma conexão criativa.` : "";
+  const keywordPrompt = keyword ? `\nFoque o conteúdo no tema: "${keyword}".` : "";
 
   const prompt = `
     Você é um especialista em conteúdo para impressoras térmicas 80mm.
-    Gere ${count} itens únicos de: ${promptContext}.${keywordPrompt}
+    Gere ${count} itens de: ${promptContext}.${keywordPrompt}
     ${extraInstructions}
     
     REGRAS GERAIS:
-    1. Para categorias comuns (não historinhas/biblico), mantenha texto curto (max 180 caracteres).
-    2. Para 'historinhas' e 'biblico', siga estritamente o tamanho solicitado (mais longo).
-    3. Variedade total (não repita temas).
-    4. 'imageSeed': uma palavra-chave em Inglês para gerar imagem relacionada ao texto gerado.
-    5. 'authorOrSource': Autor, Banda, Fonte, Referência ou Moral.
+    1. Texto curto e impacto visual.
+    2. 'imageSeed': uma palavra em Inglês para ícone/imagem.
+    3. 'authorOrSource': Fonte, Autor ou Desejo de Sorte.
+    4. Nunca repita números no mesmo jogo de loteria.
     
     Retorne APENAS JSON.
   `;
@@ -114,7 +109,7 @@ export const generateContent = async (
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
-        temperature: 1.3,
+        temperature: 1.0,
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.ARRAY,
@@ -134,7 +129,7 @@ export const generateContent = async (
     });
 
     const jsonText = response.text;
-    if (!jsonText) throw new Error("No response from AI");
+    if (!jsonText) throw new Error("No response");
 
     const data = JSON.parse(jsonText) as any[];
 
@@ -142,7 +137,7 @@ export const generateContent = async (
       id: `gen-${Date.now()}-${index}`,
       text: item.text,
       authorOrSource: item.authorOrSource,
-      imageSeed: item.imageSeed || 'abstract',
+      imageSeed: item.imageSeed || 'luck',
       translation: item.translation,
       answer: item.answer
     }));
@@ -151,7 +146,7 @@ export const generateContent = async (
     console.error("Gemini API Error:", error);
     return Array.from({ length: count }).map((_, i) => ({
       id: `err-${i}`,
-      text: "Erro ao conectar com a IA. Tente novamente.",
+      text: "Erro ao gerar números. Tente novamente.",
       authorOrSource: "Erro",
       imageSeed: "error"
     }));

@@ -23,17 +23,18 @@ const App: React.FC = () => {
     setLoading(false);
   };
 
-  // Find the icon for the currently selected category to pass to the receipt
   const currentCategoryObj = CATEGORIES.find(c => c.id === config.category);
   const currentCategoryIcon = currentCategoryObj?.icon || '✨';
   
-  // Determine Receipt Title based on Category
   const getReceiptTitle = (cat: Category | null) => {
     if (cat === 'historinhas') return 'HISTÓRIA INFANTIL';
     if (cat === 'biblico') return 'MOMENTO DE FÉ';
     if (cat === 'charadas') return 'DESAFIO DO DIA';
     if (cat === 'piadas') return 'HUMOR DO DIA';
     if (cat === 'matematica') return 'DESAFIO MATEMÁTICO';
+    if (cat === 'megasena') return 'PALPITE MEGA-SENA';
+    if (cat === 'quina') return 'PALPITE QUINA';
+    if (cat === 'lotofacil') return 'PALPITE LOTOFÁCIL';
     return 'FRASE DO DIA';
   };
 
@@ -42,10 +43,8 @@ const App: React.FC = () => {
   return (
     <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-slate-900 text-slate-100 font-sans">
       
-      {/* --- LEFT PANEL: Controls --- */}
       <div className="w-full md:w-[380px] flex flex-col h-full border-r border-slate-800 bg-slate-900 shadow-2xl z-20 no-print shrink-0">
         
-        {/* Header */}
         <div className="p-4 border-b border-slate-800 flex items-center gap-3 bg-slate-900">
           <div className="bg-emerald-500/10 p-2 rounded-lg text-2xl">🖨️</div>
           <div>
@@ -54,10 +53,8 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Controls */}
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           
-          {/* 1. Keyword (Opcional) */}
           <section className="mb-6">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">
               Foco Personalizado (Opcional)
@@ -79,10 +76,8 @@ const App: React.FC = () => {
                 </button>
               )}
             </div>
-            <p className="text-[10px] text-slate-500 mt-1 italic">Dica: A IA tentará mesclar o tema acima com a categoria abaixo.</p>
           </section>
 
-          {/* 2. Categories */}
           <section className="mb-6">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">1. Escolha o Tema</label>
             <div className="grid grid-cols-3 gap-2">
@@ -102,7 +97,6 @@ const App: React.FC = () => {
             </div>
           </section>
 
-          {/* 3. Options */}
           <section className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
             <label className="text-xs font-bold text-slate-400 uppercase mb-3 block">2. Configurações</label>
             
@@ -139,7 +133,6 @@ const App: React.FC = () => {
           </section>
         </div>
 
-        {/* Bottom Actions */}
         <div className="p-4 bg-slate-900 border-t border-slate-800 space-y-3">
           <button
             disabled={!config.category || loading}
@@ -163,10 +156,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* --- RIGHT PANEL: Grid Preview --- */}
       <div className="flex-1 bg-gray-200 h-full overflow-y-auto">
-        
-        {/* Empty State */}
         {items.length === 0 && !loading && (
           <div className="h-full flex flex-col items-center justify-center text-slate-400 opacity-50">
             <div className="text-6xl mb-4 grayscale">🖨️</div>
@@ -174,7 +164,6 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Loading Skeletons Grid */}
         {loading && (
            <div className="p-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 w-full max-w-[1600px] mx-auto">
               {Array.from({ length: config.count }).map((_, i) => (
@@ -182,13 +171,11 @@ const App: React.FC = () => {
                     <div className="w-12 h-12 bg-gray-200 rounded-full mb-2"></div>
                     <div className="w-full h-32 bg-gray-200 rounded mt-2"></div>
                     <div className="w-full h-4 bg-gray-200 rounded mt-4"></div>
-                    <div className="w-3/4 h-4 bg-gray-200 rounded"></div>
                  </div>
               ))}
            </div>
         )}
 
-        {/* Results Grid */}
         {items.length > 0 && !loading && (
           <div className="print-area w-full p-8 md:p-10">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-12 w-full max-w-[1800px] mx-auto items-start">

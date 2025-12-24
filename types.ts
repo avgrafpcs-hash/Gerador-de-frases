@@ -1,5 +1,4 @@
 
-
 export type Category = 
   | 'religiosa' 
   | 'pensadores' 
@@ -12,7 +11,10 @@ export type Category =
   | 'curiosidades'
   | 'historinhas'
   | 'biblico'
-  | 'matematica';
+  | 'matematica'
+  | 'megasena'
+  | 'quina'
+  | 'lotofacil';
 
 export interface GeneratedContent {
   id: string;
@@ -39,6 +41,9 @@ export const CATEGORIES: { id: Category; label: string; icon: string }[] = [
   { id: 'piadas', label: 'Piadas', icon: '☺' },
   { id: 'charadas', label: 'Charadas', icon: '❔' },
   { id: 'matematica', label: 'Matemática', icon: '🔢' },
+  { id: 'megasena', label: 'Mega-Sena', icon: '🍀' },
+  { id: 'quina', label: 'Quina', icon: '💰' },
+  { id: 'lotofacil', label: 'Lotofácil', icon: '🎲' },
   { id: 'curiosidades', label: 'Curiosidades', icon: '🔎' },
   { id: 'historinhas', label: 'Histórinhas', icon: '🧸' },
   { id: 'biblico', label: 'Palavra de Fé', icon: '📖' },
