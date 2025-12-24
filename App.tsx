@@ -35,7 +35,6 @@ const App: React.FC = () => {
     if (cat === 'megasena') return 'PALPITE MEGA-SENA';
     if (cat === 'quina') return 'PALPITE QUINA';
     if (cat === 'lotofacil') return 'PALPITE LOTOFÁCIL';
-    if (cat === 'gibi') return 'GIBI EXCLUSIVO';
     return 'FRASE DO DIA';
   };
 
@@ -146,7 +145,7 @@ const App: React.FC = () => {
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>{config.category === 'gibi' ? 'Desenhando...' : 'Criando...'}</span>
+                <span>Criando...</span>
               </>
             ) : (
               <>

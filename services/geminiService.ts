@@ -8,7 +8,16 @@ export const generateContent = async (
   keyword?: string
 ): Promise<GeneratedContent[]> => {
   
-  const apiKey = process.env.API_KEY;
+  const getApiKey = () => {
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) return process.env.API_KEY;
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) return import.meta.env.VITE_API_KEY;
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.REACT_APP_API_KEY) return import.meta.env.REACT_APP_API_KEY;
+    return '';
+  };
+
+  const apiKey = getApiKey();
 
   if (!apiKey) {
     console.error("API Key not found.");
@@ -22,87 +31,6 @@ export const generateContent = async (
 
   const ai = new GoogleGenAI({ apiKey });
 
-  // Lógica Especial para GIBI (Geração de Imagem)
-  if (category === 'gibi') {
-    const results: GeneratedContent[] = [];
-    
-    // O prompt de imagem utiliza a palavra-chave se fornecida
-    const temaDesejado = keyword || "um dia engraçado na vida de um gato";
-    
-    const imagePrompt = `
-      Crie uma história em quadrinhos (gibi) curta baseada no seguinte TEMA: ${temaDesejado}.
-
-      Regras obrigatórias:
-      - Estilo cartoon extremamente simples
-      - Traços pretos grossos e bem definidos
-      - Alto contraste (preto no branco)
-      - Sem sombras, sem degradê, sem cinza
-      - Sem texturas
-      - Fundo totalmente branco
-      - Personagens com poucos detalhes (olhos simples, boca em traço)
-      - Cenários mínimos ou vazios
-      - Desenho legível mesmo em baixa resolução
-
-      Formato da história:
-      - 4 quadros verticais organizados em uma única coluna
-      - Um quadro abaixo do outro
-      - Cada quadro com borda preta grossa
-      - Apenas 1 personagem principal
-      - Ações claras e exageradas
-
-      Texto:
-      - Balões grandes e simples
-      - Frases curtas (máximo 5 palavras) em Português
-      - Fonte simples e grossa
-      - Texto sempre em preto
-
-      Composição:
-      - Quadros centralizados
-      - Personagem ocupando a maior parte do quadro
-      - Muito espaço em branco
-      
-      IMPORTANTE: A saída deve ser APENAS uma imagem em preto e branco puro.
-    `;
-
-    try {
-      // Geramos um por um baseado no count solicitado
-      for (let i = 0; i < count; i++) {
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash-image',
-          contents: {
-            parts: [{ text: imagePrompt }],
-          },
-          config: {
-            imageConfig: {
-              aspectRatio: "9:16"
-            }
-          }
-        });
-
-        let imageUrl = "";
-        for (const part of response.candidates[0].content.parts) {
-          if (part.inlineData) {
-            imageUrl = `data:image/png;base64,${part.inlineData.data}`;
-            break;
-          }
-        }
-
-        results.push({
-          id: `gibi-${Date.now()}-${i}`,
-          text: "", // O texto está dentro da imagem
-          authorOrSource: `Gibi IA: ${temaDesejado}`,
-          imageSeed: "comic",
-          imageUrl: imageUrl
-        });
-      }
-      return results;
-    } catch (error) {
-      console.error("Erro na geração de Gibi:", error);
-      return [{ id: 'err', text: "Erro ao gerar Gibi.", authorOrSource: "Sistema", imageSeed: "error" }];
-    }
-  }
-
-  // Lógica para categorias de Texto (Original)
   let promptContext = "";
   let extraInstructions = "";
 
@@ -117,10 +45,10 @@ export const generateContent = async (
       promptContext = "citações curtas profundas e reflexivas de filósofos";
       break;
     case 'frames':
-      promptContext = "frases curtas icônicas do cinema";
+      promptContext = "frases curtas icônicas do cinema e cultura pop";
       break;
     case 'versos':
-      promptContext = "poemas curtos ou haicais";
+      promptContext = "poemas curtos ou haicais inspiradores";
       break;
     case 'musicas':
       promptContext = "trechos curtos de músicas famosas.";
@@ -134,40 +62,51 @@ export const generateContent = async (
       extraInstructions = "Pergunta em 'text', resposta em 'answer'.";
       break;
     case 'matematica':
-      promptContext = "desafios matemáticos ou lógica";
+      promptContext = "desafios matemáticos divertidos ou lógica";
       extraInstructions = "Problema em 'text', resultado em 'answer'.";
       break;
     case 'megasena':
-      promptContext = "jogo da sorte Mega-Sena (6 num 01-60)";
+      promptContext = "um jogo da sorte para a Mega-Sena";
+      extraInstructions = "Gere 6 números únicos entre 01 e 60. Formate os números com zeros à esquerda (ex: 05, 12, 44) e espaços amplos entre eles. No campo 'authorOrSource', escreva uma frase curta de boa sorte.";
       break;
     case 'quina':
-      promptContext = "jogo da sorte Quina (5 num 01-80)";
+      promptContext = "um jogo da sorte para a Quina";
+      extraInstructions = "Gere 5 números únicos entre 01 e 80. Formate os números com zeros à esquerda e espaços. No campo 'authorOrSource', escreva uma frase curta de boa sorte.";
       break;
     case 'lotofacil':
-      promptContext = "jogo da sorte Lotofácil (15 num 01-25)";
+      promptContext = "um jogo da sorte para a Lotofácil";
+      extraInstructions = "Gere 15 números únicos entre 01 e 25. Formate os números em 3 linhas de 5 números para caber bem no papel 80mm. No campo 'authorOrSource', escreva uma frase curta de boa sorte.";
       break;
     case 'curiosidades':
-      promptContext = "fatos curiosos ('Você sabia?')";
+      promptContext = "fatos curiosos e interessantes ('Você sabia?')";
       break;
     case 'historinhas':
-      promptContext = "historinhas infantis educativas";
+      promptContext = "historinhas infantis educativas (12 a 20 linhas)";
       break;
     case 'biblico':
-      promptContext = "passagens bíblicas com reflexão";
+      promptContext = "passagens bíblicas motivacionais com reflexão";
       break;
   }
 
   const keywordPrompt = keyword ? `\nFoque o conteúdo no tema: "${keyword}".` : "";
 
   const prompt = `
+    Você é um especialista em conteúdo para impressoras térmicas 80mm.
     Gere ${count} itens de: ${promptContext}.${keywordPrompt}
     ${extraInstructions}
+    
+    REGRAS GERAIS:
+    1. Texto curto e impacto visual.
+    2. 'imageSeed': uma palavra em Inglês para ícone/imagem.
+    3. 'authorOrSource': Fonte, Autor ou Desejo de Sorte.
+    4. Nunca repita números no mesmo jogo de loteria.
+    
     Retorne APENAS JSON.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         temperature: 1.0,
@@ -191,6 +130,7 @@ export const generateContent = async (
 
     const jsonText = response.text;
     if (!jsonText) throw new Error("No response");
+
     const data = JSON.parse(jsonText) as any[];
 
     return data.map((item, index) => ({
@@ -204,6 +144,11 @@ export const generateContent = async (
 
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return [{ id: 'err', text: "Erro ao gerar conteúdo.", authorOrSource: "Erro", imageSeed: "error" }];
+    return Array.from({ length: count }).map((_, i) => ({
+      id: `err-${i}`,
+      text: "Erro ao gerar números. Tente novamente.",
+      authorOrSource: "Erro",
+      imageSeed: "error"
+    }));
   }
 };

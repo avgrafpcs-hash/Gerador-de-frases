@@ -14,17 +14,15 @@ export type Category =
   | 'matematica'
   | 'megasena'
   | 'quina'
-  | 'lotofacil'
-  | 'gibi';
+  | 'lotofacil';
 
 export interface GeneratedContent {
   id: string;
   text: string;
   authorOrSource: string;
   imageSeed: string;
-  imageUrl?: string;    // Nova propriedade para armazenar a imagem do Gibi
-  translation?: string; 
-  answer?: string;      
+  translation?: string; // For English songs
+  answer?: string;      // For Riddles (Charadas)
 }
 
 export interface AppConfig {
@@ -46,7 +44,6 @@ export const CATEGORIES: { id: Category; label: string; icon: string }[] = [
   { id: 'megasena', label: 'Mega-Sena', icon: '🍀' },
   { id: 'quina', label: 'Quina', icon: '💰' },
   { id: 'lotofacil', label: 'Lotofácil', icon: '🎲' },
-  { id: 'gibi', label: 'Gibi IA', icon: '🎨' },
   { id: 'curiosidades', label: 'Curiosidades', icon: '🔎' },
   { id: 'historinhas', label: 'Histórinhas', icon: '🧸' },
   { id: 'biblico', label: 'Palavra de Fé', icon: '📖' },
