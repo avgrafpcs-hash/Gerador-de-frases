@@ -1,11 +1,11 @@
 
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { Category, GeneratedContent } from "../types";
 
 export const generateContent = async (
   category: Category,
-  count: number
+  count: number,
+  keyword?: string
 ): Promise<GeneratedContent[]> => {
   
   const getApiKey = () => {
@@ -92,16 +92,18 @@ export const generateContent = async (
       break;
   }
 
+  const keywordPrompt = keyword ? `\nIMPORTANTE: Foque o conteúdo especificamente no seguinte tema/palavra-chave: "${keyword}". Se a palavra-chave for incompatível com a categoria, tente fazer uma conexão criativa.` : "";
+
   const prompt = `
     Você é um especialista em conteúdo para impressoras térmicas 80mm.
-    Gere ${count} itens únicos de: ${promptContext}.
+    Gere ${count} itens únicos de: ${promptContext}.${keywordPrompt}
     ${extraInstructions}
     
     REGRAS GERAIS:
     1. Para categorias comuns (não historinhas/biblico), mantenha texto curto (max 180 caracteres).
     2. Para 'historinhas' e 'biblico', siga estritamente o tamanho solicitado (mais longo).
     3. Variedade total (não repita temas).
-    4. 'imageSeed': uma palavra-chave em Inglês para gerar imagem.
+    4. 'imageSeed': uma palavra-chave em Inglês para gerar imagem relacionada ao texto gerado.
     5. 'authorOrSource': Autor, Banda, Fonte, Referência ou Moral.
     
     Retorne APENAS JSON.

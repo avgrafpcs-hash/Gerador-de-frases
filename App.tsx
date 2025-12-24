@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Category, CATEGORIES, AppConfig, GeneratedContent } from './types';
 import { generateContent } from './services/geminiService';
@@ -11,6 +10,7 @@ const App: React.FC = () => {
     count: 1,
     includeImage: true,
   });
+  const [keyword, setKeyword] = useState('');
   const [items, setItems] = useState<GeneratedContent[]>([]);
   const [loading, setLoading] = useState(false);
   
@@ -18,7 +18,7 @@ const App: React.FC = () => {
     if (!config.category) return;
     setLoading(true);
     setItems([]); 
-    const newItems = await generateContent(config.category, config.count);
+    const newItems = await generateContent(config.category, config.count, keyword);
     setItems(newItems);
     setLoading(false);
   };
@@ -57,7 +57,32 @@ const App: React.FC = () => {
         {/* Controls */}
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           
-          {/* 1. Categories */}
+          {/* 1. Keyword (Opcional) */}
+          <section className="mb-6">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">
+              Foco Personalizado (Opcional)
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Ex: Café, Verão, Gatos, TI..."
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-white placeholder:text-slate-600"
+              />
+              {keyword && (
+                <button 
+                  onClick={() => setKeyword('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            <p className="text-[10px] text-slate-500 mt-1 italic">Dica: A IA tentará mesclar o tema acima com a categoria abaixo.</p>
+          </section>
+
+          {/* 2. Categories */}
           <section className="mb-6">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">1. Escolha o Tema</label>
             <div className="grid grid-cols-3 gap-2">
@@ -77,7 +102,7 @@ const App: React.FC = () => {
             </div>
           </section>
 
-          {/* 2. Options */}
+          {/* 3. Options */}
           <section className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
             <label className="text-xs font-bold text-slate-400 uppercase mb-3 block">2. Configurações</label>
             
